@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns="http://usefulinc.com/ns/doap#"
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  >
+
+	<name>CP210x Programmer</name>
+	<shortname>cp210x-program</shortname>
+	
+	<homepage rdf:resource="http://cp210x-program.sourceforge.net/" />
+	<created>2007-04-02</created>
+
+	<shortdesc xml:lang="en">
+	    Provides access to the EEPROM in an Silabs CP210x
+	</shortdesc>
+
+    <bug-database rdf:resource="http://sourceforge.net/tracker/?group_id=193093" />
+    <download-page rdf:resource="http://sourceforge.net/project/showfiles.php?group_id=193093" />
+
+	<description xml:lang="en">
+The goal of this library is to provide access to the EEPROM of an Silabs CP210x
+under Linux. 
+
+The CP210x is an USB-to-serial chip used in a lot of USB devices (similar to
+FTDIs and PL2303). The CP210x has a EEPROM on the chip which can be programmed
+via USB. Silabs provides already a library and gui programm to program this
+EEPROM, but only for windows. 
+
+For more information see:
+* http://www.silabs.com/tgwWebApp/public/web_content/products/Microcontrollers/Interface/en/interface.htm
+* http://www.silabs.com/public/documents/tpub_doc/anote/Microcontrollers/Interface/en/an144.pdf
+
+Requires:
+* libusb: http://libusb.sourceforge.net/
+* ctypes: http://starship.python.net/crew/theller/ctypes/
+	</description>
+
+<!--	<mailing-list rdf:resource="http://" /> -->
+
+	<maintainer>
+		<foaf:Person>
+			<foaf:name>Johannes Hölzl</foaf:name>
+			<foaf:homepage rdf:resource="http://hoelzl-bros.de/~johannes/" />
+		</foaf:Person>
+	</maintainer>
+
+    <repository>
+        <SVNRepository>
+            <location rdf:resource="http://cp210x-program.svn.sourceforge.net/" />
+        </SVNRepository>
+    </repository>
+
+	<license rdf:resource="http://usefulinc.com/doap/licenses/lgpl" />
+
+    <programming-language>
+        Python
+    </programming-language>
+    
+    <os>
+        Linux
+    </os>
+
+    <os>
+        FreeBSD
+    </os>
+
+    <os>
+        Mac OS X
+    </os>
+
+<!--    <bug-database rdf:resource="http://bugzilla.gnome.org/" /> -->
+
+	<release>
+		<Version>
+			<name>unstable</name>
+			<created>2007-04-05</created>
+			<revision>0.1</revision>
+		</Version>
+	</release>
+	
+</Project>

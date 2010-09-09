@@ -1,0 +1,4 @@
+include doc/*.txt
+include doc/*.rules
+include LICENSE
+include cp210x-program.doap
