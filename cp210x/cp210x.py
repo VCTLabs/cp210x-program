@@ -191,8 +191,8 @@ class Cp210xProgrammer(object):
                             yield self(dev)
                             break
                     elif isinstance(pattern, tuple):
-                        if (bus.dirname == pattern[0] and
-                            dev.filename == pattern[1]):
+                        if (bus.contents.dirname == pattern[0] and
+                            dev.contents.filename == pattern[1]):
                             yield self(dev)
                             break
                 dev = dev.contents.next
