@@ -113,7 +113,7 @@ def find_device(patterns):
         elif '/' in pattern:
             try:
                 bus, device = pattern.split('/')
-                usb.patterns.append( (bus, device) )
+                usb_patterns.append( (bus, device) )
             except (TypeError, ValueError):
                 error("Match be either 'ddd/ddd' or 'hhhh:hhhh'.",
                       ERR_WRONG_INPUT)
