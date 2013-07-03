@@ -208,7 +208,6 @@ class Cp210xProgrammer(object):
         device is connected. After that happend the EEPROM content in the device
         is reread and the device's descriptors are the one written to it.
         """
-        assert self.handle is not None
         self.usbdev.reset()
     
     def __del__(self):
@@ -216,7 +215,6 @@ class Cp210xProgrammer(object):
             self.usbdev.attach_kernel_driver(self.intf)
 
     def _set_config(self, value, index=0, data=None, request=CP2101_CONFIG):
-        assert self.handle is not None
         if self.get_locked():
             raise DeviceLocked()
             
