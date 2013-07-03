@@ -15,7 +15,6 @@ class EEPROM:
     of an CP2101. Provides also access to the single fields in the EEPROM.
 """
 
-import ctypes
 import usb
 from usb.util import CTRL_IN, CTRL_OUT, CTRL_TYPE_VENDOR
 
@@ -218,10 +217,6 @@ class Cp210xProgrammer(object):
         if self.get_locked():
             raise DeviceLocked()
             
-        if data is not None:
-            data_length = len(data)
-        else:
-            data_length = 0
         res = self.usbdev.ctrl_transfer(CTRL_OUT | CTRL_TYPE_VENDOR,
                                         request, value, index, data)
         if data is not None and res != len(data):
