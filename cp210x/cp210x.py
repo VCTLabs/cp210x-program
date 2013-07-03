@@ -17,6 +17,7 @@ class EEPROM:
 
 import ctypes
 import usb
+from usb.util import CTRL_IN, CTRL_OUT, CTRL_TYPE_VENDOR
 
 __all__ = ['Cp210xProgrammer', 'Cp210xError']
 
@@ -125,6 +126,23 @@ class Cp210xError(IOError):
 class DeviceLocked(Cp210xError):
     pass
 
+class Cp210xMatch(object):
+    def __init__(self, patterns):
+        self.patterns = patterns
+
+    def __call__(self, dev):
+        for pattern in self.patterns:
+            if isinstance(pattern, dict):
+                for name, value in pattern.items():
+                    if getattr(dev, name) != value:
+                        return False
+                return True
+            elif isinstance(pattern, tuple):
+                if (dev.bus == int(pattern[0]) and
+                    dev.address == int(pattern[1])):
+                    return True
+        return False
+
 class Cp210xProgrammer(object):
     """Program an Silabs CP2101, CP2102 or CP2103
     
@@ -145,8 +163,7 @@ class Cp210xProgrammer(object):
     to the constructor, or use Cp210xProgrammer.list_device() to list all
     devices matching certain pattern.
     
-    To progamm the device open() it, set the data, and close() it. To have the
-    changed fields reread call reset() before closing it.
+    To have the changed fields reread call reset().
     """
     
     TIMEOUT = 300 #ms
@@ -175,49 +192,20 @@ class Cp210xProgrammer(object):
         
         """
         
-        usb.find_busses()
-        usb.find_devices()
-        
-        bus = usb.get_busses()
-        while bus:
-            dev = bus.contents.devices
-            while dev:
-                for pattern in patterns:
-                    if isinstance(pattern, dict):
-                        for name, value in pattern.items():
-                            if getattr(dev.contents.descriptor, name) != value:
-                                break
-                        else:
-                            yield self(dev)
-                            break
-                    elif isinstance(pattern, tuple):
-                        if (bus.contents.dirname == pattern[0] and
-                            dev.contents.filename == pattern[1]):
-                            yield self(dev)
-                            break
-                dev = dev.contents.next
-            bus = bus.contents.next
-    
-    def __init__(self, dev_info):
-        self.dev_info = dev_info
-        self.handle = None
+        return usb.core.find(find_all=True,
+                             custom_match=Cp210xMatch(patterns))
+
+    def __init__(self, usbdev):
+        self.usbdev = usbdev
         self._locked = None
+        self.has_kernel_driver = False
+        self.has_kernel_driver = usbdev.is_kernel_driver_active(0)
+        if self.has_kernel_driver:
+            cfg = usbdev.get_active_configuration()
+            self.intf = cfg[(0,0)].bInterfaceNumber
+            usbdev.detach_kernel_driver(self.intf)
+        usbdev.set_configuration()
         
-    def open(self):
-        """Opens the device.
-        
-        Only after an successful call to open() data can be read from and
-        written to the device. 
-
-        Claims all resources associated with this device.
-        """
-        self.handle = usb.open(self.dev_info)
-        if self.handle == 0:
-            self.handle = None
-            raise Cp210xError("Can't open device.")
-        usb.set_configuration(self.handle, 1)
-        usb.claim_interface(self.handle, 0)
-
     def reset(self):
         """Force the USB stack to reset the device.
         
@@ -226,21 +214,11 @@ class Cp210xProgrammer(object):
         is reread and the device's descriptors are the one written to it.
         """
         assert self.handle is not None
-        usb.reset(self.handle)
-    
-    def close(self):
-        """Closes the device.
-        
-        Releases all resources associated with this device.
-        """
-        assert self.handle is not None
-        usb.release_interface(self.handle, 0)
-        usb.close(self.handle)
-        self.handle = None
+        self.usbdev.reset()
     
     def __del__(self):
-        if self.handle is not None:
-            self.close()
+        if self.has_kernel_driver:
+            self.usbdev.attach_kernel_driver(self.intf)
 
     def _set_config(self, value, index=0, data=None, request=CP2101_CONFIG):
         assert self.handle is not None
@@ -251,12 +229,11 @@ class Cp210xProgrammer(object):
             data_length = len(data)
         else:
             data_length = 0
-        res = usb.control_msg(self.handle, usb.ENDPOINT_OUT | usb.TYPE_VENDOR, 
-                              request, value, index, data, data_length,
-                              self.TIMEOUT)
-        if res < 0:
-            raise Cp210xError("Unable to send request %04X result=%d"
-                              % (value, res))
+        res = self.usbdev.ctrl_transfer(CTRL_OUT | CTRL_TYPE_VENDOR,
+                                        request, value, index, data)
+        if res != data.length():
+            raise Cp210xError("Short write (%d of %d bytes)"
+                              % (res, data.length()))
 
     def _set_config_string(self, value, content, max_length):
         assert isinstance(content, basestring)
@@ -265,16 +242,10 @@ class Cp210xProgrammer(object):
         self._set_config(value, data=chr(len(encoded) + 2) + "\x03" + encoded)
 
     def _get_config(self, value, length, index=0, request=CP2101_CONFIG):
-        assert self.handle is not None
-        data = ctypes.create_string_buffer(length)
-        res = usb.control_msg(self.handle, usb.ENDPOINT_IN | usb.TYPE_VENDOR, 
-                              request, value, index, data, length,
-                              self.TIMEOUT)
-        if res < 0:
-            raise Cp210xError("Unable to send request, %04X result=%d"
-                              % (value, res))
-        return data.raw[:res]
-            
+        res = self.usbdev.ctrl_transfer(CTRL_IN | CTRL_TYPE_VENDOR,
+                                        request, value, index, length)
+        return res.tostring()
+
     def _get_int8_config(self, value, index=0, request=CP2101_CONFIG):
         return ord(self._get_config(value, 1, index=index, request=request))
 

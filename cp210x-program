@@ -16,8 +16,9 @@ import re
 import string
 import traceback
 import optparse
+import usb.core
 
-from cp210x import usb, valuefile, cp210x
+from cp210x import valuefile, cp210x
 from cp210x.eeprom import EEPROM, HexFileError
 from cp210x.valuefile import read_baudrate_info, update_values, ValuesFileError
 TRANS_UNDERSCORE = string.maketrans('_', '-')
@@ -28,6 +29,7 @@ ERR_INTERNAL = -2
 ERR_DEVICE_LOCKED = -3
 ERR_DEVICE_NOT_FOUND = -4
 ERR_DEVICE_ERROR = -5
+ERR_OTHER = -100
 
 def error(message, retval=-1):
     sys.stderr.write(message + "\n")
@@ -127,12 +129,10 @@ def find_device(patterns):
     error("No devices found", ERR_DEVICE_NOT_FOUND)
     
 def read_cp210x(options):
-    dev = find_device(options.match)
-    dev.open()
-    try:
-        eeprom = EEPROM(dev)
-    finally:
-        dev.close()
+    usbdev = find_device(options.match)
+    dev = cp210x.Cp210xProgrammer(usbdev)
+
+    eeprom = EEPROM(dev)
         
     if options.hex_output:
         eeprom.write_hex_file(output_file(options.hex_output))
@@ -140,8 +140,9 @@ def read_cp210x(options):
         valuefile.write_file(output_file(options.ini_output), eeprom.get_values())
 
 def write_cp210x(options):
-    dev = find_device(options.match)
-    dev.open()
+    usbdev = find_device(options.match)
+    dev = cp210x.Cp210xProgrammer(usbdev)
+
     try:
         if options.hex_input or options.force_eeprom:
                 
@@ -235,7 +236,6 @@ def main():
 
 if __name__ == '__main__':
     try:
-        usb.init()
         main()
         
     except cp210x.DeviceLocked:
@@ -254,9 +254,6 @@ if __name__ == '__main__':
     except ValuesFileError, err:
         error(str(err), ERR_OTHER)
 
-    except usb.LibUsbNotInstalled:
-        error("Package 'libusb' not installed.")
-        
     except SystemExit, err:
         raise
 
