@@ -149,8 +149,7 @@ def write_cp210x(options):
     usbdev = find_device(options.match)
     dev = cp210x.Cp210xProgrammer(usbdev)
 
-    try:
-        if options.hex_input or options.force_eeprom:
+    if options.hex_input or options.force_eeprom:
                 
             if options.hex_input:
                 eeprom = EEPROM(input_file(options.hex_input))
@@ -165,10 +164,8 @@ def write_cp210x(options):
             eeprom.set_values(values)
             
             eeprom.write_to_cp210x(dev)
-            if options.reset_device:
-                dev.reset()
 
-        else:
+    else:
             if options.ini_input:
                 values = valuefile.read_file(input_file(options.ini_input))
             else:
@@ -176,10 +173,8 @@ def write_cp210x(options):
             update_values(values, options_to_values(options), dev)
             dev.set_values(values)
             
-        if options.reset_device:
-            dev.reset()
-    finally:
-        dev.close()
+    if options.reset_device:
+        dev.reset()
 
 def change_hexfile(options):
     eeprom = EEPROM(input_file(options.hex_input))
