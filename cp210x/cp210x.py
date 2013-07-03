@@ -224,9 +224,9 @@ class Cp210xProgrammer(object):
             data_length = 0
         res = self.usbdev.ctrl_transfer(CTRL_OUT | CTRL_TYPE_VENDOR,
                                         request, value, index, data)
-        if res != data.length():
+        if data is not None and res != len(data):
             raise Cp210xError("Short write (%d of %d bytes)"
-                              % (res, data.length()))
+                              % (res, len(data)))
 
     def _set_config_string(self, value, content, max_length):
         assert isinstance(content, basestring)
