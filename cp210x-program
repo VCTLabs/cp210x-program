@@ -112,13 +112,19 @@ def find_device(patterns):
                       ERR_WRONG_INPUT)
                 
             usb_patterns.append(dict(idVendor=vid, idProduct=pid))
+
         elif '/' in pattern:
             try:
-                bus, device = pattern.split('/')
-                usb_patterns.append( (bus, device) )
+                busString, addressString = pattern.split('/')
+                bus = int(busString)
+                address = int(addressString)
+
             except (TypeError, ValueError):
                 error("Match be either 'ddd/ddd' or 'hhhh:hhhh'.",
                       ERR_WRONG_INPUT)
+
+            usb_patterns.append(dict(bus=bus, address=address))
+
         else:
             error("Match be either 'ddd/ddd' or 'hhhh:hhhh'.",
                   ERR_WRONG_INPUT)

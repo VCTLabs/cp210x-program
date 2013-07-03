@@ -132,15 +132,10 @@ class Cp210xMatch(object):
 
     def __call__(self, dev):
         for pattern in self.patterns:
-            if isinstance(pattern, dict):
-                for name, value in pattern.items():
-                    if getattr(dev, name) != value:
-                        return False
-                return True
-            elif isinstance(pattern, tuple):
-                if (dev.bus == int(pattern[0]) and
-                    dev.address == int(pattern[1])):
-                    return True
+            for name, value in pattern.items():
+                if getattr(dev, name) != value:
+                    return False
+            return True
         return False
 
 class Cp210xProgrammer(object):
