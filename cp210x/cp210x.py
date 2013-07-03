@@ -56,8 +56,8 @@ PID_CP210x          = 0xEA60
 VALUES = [
     ('product_string', 'string'),
     ('serial_number',  'string'),
-    ('product_id',     'id'),
     ('vendor_id',      'id'),
+    ('product_id',     'id'),
     ('version',        'version'),
     ('bus_powered',    'boolean'),
     ('max_power',      'int'),

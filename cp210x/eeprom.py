@@ -12,8 +12,8 @@ POS_BAUDRATE_TABLE  = 0x0000
 POS_PART_NUMBER     = 0x01FF
 POS_PRODUCT_STRING  = 0x0208
 POS_SERIAL_NUMBER   = 0x0307
-POS_PRODUCT_ID      = 0x0390
-POS_VENDOR_ID       = 0x0392
+POS_VENDOR_ID       = 0x0390
+POS_PRODUCT_ID      = 0x0392
 POS_VERSION         = 0x0394
 POS_CFG_ATTRIBUTES  = 0x03A1
 POS_MAX_POWER       = 0x03A2
@@ -156,8 +156,8 @@ class EEPROM(object):
     product_string = _str_value(POS_PRODUCT_STRING, cp210x.SIZE_PRODUCT_STRING)
     serial_number = _str_value(POS_SERIAL_NUMBER, cp210x.SIZE_SERIAL_NUMBER)
     part_number = _int_value(POS_PART_NUMBER, 1)
-    product_id = _int_value(POS_PRODUCT_ID, 2)
     vendor_id = _int_value(POS_VENDOR_ID, 2)
+    product_id = _int_value(POS_PRODUCT_ID, 2)
     version = _int_value(POS_VERSION, 2, 
                          cp210x.from_bcd2, cp210x.to_bcd2)
     bus_powered = _int_value(POS_CFG_ATTRIBUTES, 1, 
