@@ -2,6 +2,14 @@
 # Copyright (c) 2007 Johannes Hölzl <johannes.hoelzl@gmx.de>
 #
 # This library is covered by the GNU LGPL, read LICENSE for details.
+"""Provides logical view of the EEPROM of Silabs CP210x devices
+
+The following class is available:
+
+class EEPROM:
+    Can be used to read or write a hex file containing the EEPROM content
+    of a CP210x. Also provides access to single fields in the EEPROM.
+"""
 
 import cp210x
 from cp210x import from_binary, to_binary, VALUES
@@ -76,7 +84,7 @@ class EEPROM(object):
                 raise HexFileError("Hex data expected")
             
             if len(content) < 5:
-                raise HexFileError("Line to short")
+                raise HexFileError("Line too short")
 
             if checksum(content) != 0:
                 raise HexFileError("Checksum error")
@@ -94,7 +102,7 @@ class EEPROM(object):
                 address += len(line)
             elif tag_type == 0x01:
                 if size != 0 or len(line) != 0:
-                    raise HexFileError("Defekt end tag")
+                    raise HexFileError("Defect end tag")
                 break
                 
             else:

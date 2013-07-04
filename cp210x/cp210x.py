@@ -4,15 +4,11 @@
 # This library is covered by the GNU LGPL, read LICENSE for details.
 """Provides access to the EEPROM of Silabs CP210x devices
 
-The following classes are available:
+The following class is available:
 
 class Cp210xProgrammer:
-    Provides direct access to the CP2101, can be used to write single data
+    Provides direct access to the CP210x, can be used to write single data
     directly or via an EEPROM image.
-
-class EEPROM:
-    Can be used to read or write a hex file containing the EEPROM content
-    of an CP2101. Provides also access to the single fields in the EEPROM.
 """
 
 import usb
@@ -133,9 +129,9 @@ class Cp210xMatch(object):
         return False
 
 class Cp210xProgrammer(object):
-    """Program an Silabs CP2101, CP2102 or CP2103
+    """Program a Silabs CP2101, CP2102 or CP2103
     
-    This modul provides access to Silabs CP210x devices to set some USB
+    This module provides access to Silabs CP210x devices to set some USB
     descriptor fields and some USB descriptor strings. 
 
     The following fields can be set:
@@ -148,11 +144,9 @@ class Cp210xProgrammer(object):
      * Bus Powered
      * max. Power consumption
  
-    Either use libusb to find a device, and provide the device description
+    Either use PyUSB to find a device, and pass the usb.Device object
     to the constructor, or use Cp210xProgrammer.list_device() to list all
     devices matching certain pattern.
-    
-    To have the changed fields reread call reset().
     """
     
     TIMEOUT = 300 #ms
@@ -162,16 +156,12 @@ class Cp210xProgrammer(object):
                                        'idProduct': PID_CP210x }]):
         """Yields a list of devices matching certain patterns.
         
-        param patterns: This must be a list of dictionaries or pairs of string.
-            Each device in the usb tree is matched against all pattern in the
-            list. 
+        param patterns: This must be a list of dictionaries. Each device
+            in the usb tree is matched against all patterns in the list. 
             
-            When an item is a dictionary all fields of the descriptors
-            are compared against the corresponding values in the dictionary. If
-            each value is equal, the device is yielded.
-            
-            When an item is a pair of strings. The first string must be the
-            dirname of the bus and the second string the filename of the device.
+            All fields of the descriptors are compared with the corresponding
+            values in the dictionary. A device matches the pattern only if all
+            values match.
         
         For example:
 
@@ -238,24 +228,24 @@ class Cp210xProgrammer(object):
         return ord(data[0]) << 8 | ord(data[1])
     
     def get_eeprom_content(self):
-        """Reads the entire EEPROM content as one big 1024-byte blob.
+        """Get the entire EEPROM content as one big 1024-byte blob.
         """
         return self._get_config(REG_EEPROM, SIZE_EEPROM)
     
     def get_baudrate_content(self):
-        """Return the baudrate table as binary data.
+        """Get the baudrate table as binary data.
         """
         return self._get_config(REG_EEPROM, SIZE_BAUDRATE_TABLE)
 
     def get_baudrate_table(self):
-        """Returns the baudrate table.
+        """Get the baudrate table.
         
-        A list containing 4-tuples are returnes.
-        Each tuple containes the following data:
+        A list containing 4-tuples is returned.
+        Each tuple contains the following data:
         
-         * BaudGen: Value used to generate the real baudrate.
+         * BaudGen: Value used to generate the baudrate.
          * Time0Reset: Value used to generate the usb timeout.
-         * Prescaler: Used to generate the real baudrate.
+         * Prescaler: Used to down-scale the baudrate.
          * Baudrate: The baudrate which activates this entry.
         """
         data = self.get_baudrate_content()
@@ -263,7 +253,7 @@ class Cp210xProgrammer(object):
                 for pos in range(0, SIZE_BAUDRATE_TABLE, SIZE_BAUDRATE_CFG)]
         
     def set_baudrate_table(self, baudrates):
-        """Writes the baudrate table.
+        """Write the baudrate table.
         
         See get_baudrate_table() for the structure of the table.
         """
@@ -273,16 +263,16 @@ class Cp210xProgrammer(object):
     baudrate_table = property(get_baudrate_table, set_baudrate_table)
         
     def get_part_number(self):
-        """ The part number of the device.
+        """Get the part number of the device.
         
-        Returns: 1 for an CP2101
-                 2 for an CP2102
-                 3 for an CP2103
+        Returns: 1 for a CP2101
+                 2 for a CP2102
+                 3 for a CP2103
         """
         return self._get_int8_config(REG_PART_NUMBER)
     
     def get_locked(self):
-        """ The lock value of the device.
+        """Read the lock value of the device.
         
         When True is returnes no data can be written to the device.
         """
@@ -291,7 +281,7 @@ class Cp210xProgrammer(object):
         return self._locked
     
     def set_eeprom_content(self, content):
-        """Writes an 1024-byte blob to the EEPROM
+        """Write a 1024-byte blob to the EEPROM
         """
         assert len(content) == SIZE_EEPROM, ("EEPROM data must be %i bytes."
                                              % SIZE_EEPROM)
@@ -299,19 +289,19 @@ class Cp210xProgrammer(object):
         self._set_config(REG_EEPROM, data=content)
     
     def set_product_id(self, pid):
-        """Sets the Product ID
+        """Set the Product ID
         """
         assert pid > 0x0000 and pid < 0xFFFF
         self._set_config(REG_PRODUCT_ID, pid)
         
     def set_vendor_id(self, vid):
-        """Sets the Vendor ID
+        """Set the Vendor ID
         """
         assert vid > 0x0000 and vid < 0xFFFF
         self._set_config(REG_VENDOR_ID, vid)
     
     def set_product_string(self, product_string):
-        """Sets the product string.
+        """Set the product string.
         
         The string will be encoded with UTF-16 and must not exceed
         CP210x_MAX_PRODUCT_STRLEN.
@@ -322,7 +312,7 @@ class Cp210xProgrammer(object):
                                 SIZE_PRODUCT_STRING)
     
     def set_serial_number(self, serial_number):
-        """Sets the serial number string.
+        """Set the serial number string.
         
         The string will be encoded with UTF-16 and must not exceed
         CP210x_MAX_SERIAL_STRLEN.
@@ -333,22 +323,28 @@ class Cp210xProgrammer(object):
                                 SIZE_SERIAL_NUMBER)
     
     def set_max_power(self, max_power):
+        """Set maximum power consumption.
+        """
         assert max_power >= 0 and max_power <= 500
         self._set_config(REG_MAX_POWER, to_div2(max_power))
     
     def set_bus_powered(self, bus_powered):
+        """Set the bus-powered flag in the device descriptor.
+        """
         if bus_powered:
             self._set_config(REG_CFG_ATTRIBUTES, 0xC0)
         else:
             self._set_config(REG_CFG_ATTRIBUTES, 0x80)
 
     def set_version(self, version):
+        """Set the device version .
+        """
         self._set_config(REG_VERSION, to_bcd2(version))
 
     def set_locked(self, locked):
-        """ The lock value of the device.
+        """Set the lock value of the device.
         
-        When True is returnes no data can be written to the device.
+        When True is returned no data can be written to the device.
         """
         if locked:
             self._set_config(REG_LOCK_VALUE, LCK_LOCKED)

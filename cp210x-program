@@ -4,8 +4,8 @@
 #
 # This library is covered by the GNU LGPL, read LICENSE for details.
 """\
-Provides access to the EEPROM in an Silabs CP210x. The data can be directly to
-the device read or written.
+Provides access to the EEPROM of a Silabs CP210x. The data can be directly
+read from or written to the device.
 """
 __author__ = "Johannes Hölzl <johannes.hoelzl@gmx.de>"
 __license__ = "GNU LGPL"
