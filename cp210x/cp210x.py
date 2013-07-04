@@ -20,7 +20,7 @@ from usb.util import CTRL_IN, CTRL_OUT, CTRL_TYPE_VENDOR
 
 __all__ = ['Cp210xProgrammer', 'Cp210xError']
 
-CP2101_CONFIG       = 0xFF
+CP210x_CONFIG       = 0xFF
 
 REG_VENDOR_ID       = 0x3701
 REG_PRODUCT_ID      = 0x3702
@@ -214,7 +214,7 @@ class Cp210xProgrammer(object):
         if self.has_kernel_driver:
             self.usbdev.attach_kernel_driver(self.intf)
 
-    def _set_config(self, value, index=0, data=None, request=CP2101_CONFIG):
+    def _set_config(self, value, index=0, data=None, request=CP210x_CONFIG):
         if self.get_locked():
             raise DeviceLocked()
             
@@ -231,15 +231,15 @@ class Cp210xProgrammer(object):
         assert desc_size <= max_desc_size
         self._set_config(value, data=chr(desc_size) + "\x03" + encoded)
 
-    def _get_config(self, value, length, index=0, request=CP2101_CONFIG):
+    def _get_config(self, value, length, index=0, request=CP210x_CONFIG):
         res = self.usbdev.ctrl_transfer(CTRL_IN | CTRL_TYPE_VENDOR,
                                         request, value, index, length)
         return res.tostring()
 
-    def _get_int8_config(self, value, index=0, request=CP2101_CONFIG):
+    def _get_int8_config(self, value, index=0, request=CP210x_CONFIG):
         return ord(self._get_config(value, 1, index=index, request=request))
 
-    def _get_int16_config(self, value, index=0, request=CP2101_CONFIG):
+    def _get_int16_config(self, value, index=0, request=CP210x_CONFIG):
         data = self._get_config(value, 2, index=index, request=request)
         return ord(data[0]) << 8 | ord(data[1])
     
