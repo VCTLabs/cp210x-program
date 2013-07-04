@@ -44,7 +44,7 @@ SIZE_SERIAL_NUMBER  = 128
 SIZE_BAUDRATES      = 32
 SIZE_BAUDRATE_CFG   = 10
 SIZE_BAUDRATE_TABLE = SIZE_BAUDRATES * SIZE_BAUDRATE_CFG
-SIZE_VENDOR_STRING  = 24
+SIZE_VENDOR_STRING  = 50
 
 # Buffer size limits
 # (see AN721: CP210x/CP211x Device Customization Guide)
@@ -228,11 +228,12 @@ class Cp210xProgrammer(object):
             raise Cp210xError("Short write (%d of %d bytes)"
                               % (res, len(data)))
 
-    def _set_config_string(self, value, content, max_length):
+    def _set_config_string(self, value, content, max_desc_size):
         assert isinstance(content, basestring)
         encoded = content.encode('utf-16-le')
-        assert len(encoded) <= 2 * max_length
-        self._set_config(value, data=chr(len(encoded) + 2) + "\x03" + encoded)
+        desc_size = len(encoded) + 2
+        assert desc_size <= max_desc_size
+        self._set_config(value, data=chr(desc_size) + "\x03" + encoded)
 
     def _get_config(self, value, length, index=0, request=CP2101_CONFIG):
         res = self.usbdev.ctrl_transfer(CTRL_IN | CTRL_TYPE_VENDOR,
@@ -328,7 +329,7 @@ class Cp210xProgrammer(object):
         the maximum length of the string in characters.
         """
         self._set_config_string(REG_PRODUCT_STRING, product_string, 
-                                CP210x_MAX_PRODUCT_STRLEN)
+                                SIZE_PRODUCT_STRING)
     
     def set_serial_number(self, serial_number):
         """Sets the serial number string.
@@ -339,7 +340,7 @@ class Cp210xProgrammer(object):
         the maximum length of the string in characters.
         """
         self._set_config_string(REG_SERIAL_NUMBER, serial_number, 
-                                CP210x_MAX_SERIAL_STRLEN)
+                                SIZE_SERIAL_NUMBER)
     
     def set_max_power(self, max_power):
         assert max_power >= 0 and max_power <= 500

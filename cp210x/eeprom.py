@@ -33,17 +33,18 @@ def _int_value(position, size, read=lambda x:x, write=lambda x:x):
         self.set(position, to_binary(write(value), size))
     return property(get, set)
     
-def _str_value(position, max_size):
+def _str_value(position, max_desc_size):
     def get(self):
-        size = from_binary(self.get(position, 1))
-        assert size <= (max_size + 2) and size >= 2
+        desc_size = from_binary(self.get(position, 1))
+        assert desc_size <= max_desc_size and desc_size >= 2, "desc_size: %d, max: %d" % (desc_size, max_desc_size)
         assert self.get(position + 1, 1) == '\x03', "Missing 0x03 at %04X" % (position + 1)
-        return self.get(position + 2, size - 2).decode('utf-16-le')
+        return self.get(position + 2, desc_size - 2).decode('utf-16-le')
         
     def set(self, value):
         encoded = value.encode('utf-16-le')
-        assert len(encoded) <= max_size
-        self.set(position, chr(len(encoded) + 2) + '\x03' + encoded)
+        desc_size = len(encoded) + 2
+        assert desc_size <= max_desc_size
+        self.set(position, chr(desc_size) + '\x03' + encoded)
         
     return property(get, set)
 
