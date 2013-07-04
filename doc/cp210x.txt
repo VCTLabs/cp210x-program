@@ -18,9 +18,12 @@ COMMAND: 0x0F UNKNOWN
 
 HEXFILE:
 
-0x3808: 256 Bytes PRODUCT STRING (incl length and language)
-0x3908: 128 Bytes SERIAL NUMBER (incl length and language)
-0x3987: 1 Byte probably PART NUMBER
+0x3600: 320 Bytes BAUD CONFIG
+0x37FF: 1 Byte PART NUMBER
+0x3800: 4 Bytes String Descriptor Zero
+0x3808: 255 Bytes PRODUCT STRING (incl length and language)
+0x3907: 128 Bytes SERIAL NUMBER (incl length and language)
+0x3987: 1 Byte ???
 0x3988: 18 Byte DEVICE DESCRIPTOR
 0x399A: 32 Byte CONFIG DESCRIPTOR
 0x39C3: ? Byte VENDOR STRING
