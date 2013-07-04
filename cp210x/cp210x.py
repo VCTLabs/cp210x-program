@@ -67,12 +67,6 @@ VALUES = [
     ('baudrate_table', 'list'),
 ]
 
-def iif(v, a, b):
-    if v:
-        return a
-    else:
-        return b
-
 def to_div2(p):
     value = int(p / 2)
     if (value * 2) < p:

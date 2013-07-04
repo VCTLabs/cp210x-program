@@ -4,7 +4,7 @@
 # This library is covered by the GNU LGPL, read LICENSE for details.
 
 import cp210x
-from cp210x import from_binary, to_binary, iif, VALUES
+from cp210x import from_binary, to_binary, VALUES
 
 __all__ = ['EEPROM', 'HexFileError']
 
@@ -164,13 +164,13 @@ class EEPROM(object):
                          cp210x.from_bcd2, cp210x.to_bcd2)
     bus_powered = _int_value(POS_CFG_ATTRIBUTES, 1, 
                              lambda a: bool(a & 0x40), 
-                             lambda a: iif(a, 0xC0, 0x80))
+                             lambda a: 0xC0 if a else 0x80)
     max_power = _int_value(POS_MAX_POWER, 1, lambda p: p*2, cp210x.to_div2)
     vendor_string = _str_value(POS_VENDOR_STRING, cp210x.SIZE_VENDOR_STRING)
     locked = _int_value(POS_LOCK_VALUE, 1, 
                         lambda l: l == cp210x.LCK_LOCKED, 
-                        lambda b: iif(b, cp210x.LCK_LOCKED, 
-                                      cp210x.LCK_UNLOCKED))
+                        lambda b: cp210x.LCK_LOCKED if b
+                                  else cp210x.LCK_UNLOCKED)
         
     def get_values(self):
         return dict((name, getattr(self, name)) for name, type in VALUES)
