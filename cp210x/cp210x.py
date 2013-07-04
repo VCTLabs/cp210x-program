@@ -39,12 +39,17 @@ REG_LOCK_VALUE      = 0x370A
 REG_PART_NUMBER     = 0x370B
 
 SIZE_EEPROM         = 0x0400
-SIZE_PRODUCT_STRING = 0x007D
-SIZE_SERIAL_NUMBER  = 0x003F
+SIZE_PRODUCT_STRING = 255
+SIZE_SERIAL_NUMBER  = 128
 SIZE_BAUDRATES      = 32
 SIZE_BAUDRATE_CFG   = 10
 SIZE_BAUDRATE_TABLE = SIZE_BAUDRATES * SIZE_BAUDRATE_CFG
 SIZE_VENDOR_STRING  = 24
+
+# Buffer size limits
+# (see AN721: CP210x/CP211x Device Customization Guide)
+CP210x_MAX_PRODUCT_STRLEN = (SIZE_PRODUCT_STRING - 2) // 2
+CP210x_MAX_SERIAL_STRLEN  = (SIZE_SERIAL_NUMBER - 2) // 2
 
 LCK_LOCKED          = 0xF0
 LCK_UNLOCKED        = 0xFF
@@ -226,7 +231,7 @@ class Cp210xProgrammer(object):
     def _set_config_string(self, value, content, max_length):
         assert isinstance(content, basestring)
         encoded = content.encode('utf-16-le')
-        assert len(encoded) <= max_length
+        assert len(encoded) <= 2 * max_length
         self._set_config(value, data=chr(len(encoded) + 2) + "\x03" + encoded)
 
     def _get_config(self, value, length, index=0, request=CP2101_CONFIG):
@@ -317,15 +322,24 @@ class Cp210xProgrammer(object):
     def set_product_string(self, product_string):
         """Sets the product string.
         
-        Be aware that the string will be stored as UTF-16 encoded and should not
-        exceed SIZE_PRODUCT_STRING 
+        The string will be encoded with UTF-16 and must not exceed
+        CP210x_MAX_PRODUCT_STRLEN.
+        For Unicode Plane 0 (BMP; code points 0-FFFF), this specifies
+        the maximum length of the string in characters.
         """
         self._set_config_string(REG_PRODUCT_STRING, product_string, 
-                                SIZE_PRODUCT_STRING)
+                                CP210x_MAX_PRODUCT_STRLEN)
     
     def set_serial_number(self, serial_number):
+        """Sets the serial number string.
+        
+        The string will be encoded with UTF-16 and must not exceed
+        CP210x_MAX_SERIAL_STRLEN.
+        For Unicode Plane 0 (BMP; code points 0-FFFF), this specifies
+        the maximum length of the string in characters.
+        """
         self._set_config_string(REG_SERIAL_NUMBER, serial_number, 
-                                SIZE_SERIAL_NUMBER)
+                                CP210x_MAX_SERIAL_STRLEN)
     
     def set_max_power(self, max_power):
         assert max_power >= 0 and max_power <= 500
