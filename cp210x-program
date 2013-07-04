@@ -16,7 +16,6 @@ import re
 import string
 import traceback
 import optparse
-import usb.core
 
 from cp210x import valuefile, cp210x
 from cp210x.eeprom import EEPROM, HexFileError
