@@ -20,11 +20,7 @@ from usb.util import CTRL_IN, CTRL_OUT, CTRL_TYPE_VENDOR
 
 __all__ = ['Cp210xProgrammer', 'Cp210xError']
 
-CP2101_UART         = 0x00
 CP2101_CONFIG       = 0xFF
-
-CP2101_UART_ENABLE  = 0x0001
-CP2101_UART_DISABLE = 0x0000
 
 REG_VENDOR_ID       = 0x3701
 REG_PRODUCT_ID      = 0x3702
