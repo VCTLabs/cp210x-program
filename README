@@ -31,8 +31,7 @@ Dependencies
 ------------
 
  * Python >= 2.4
- * ctypes >= 0.9 (only when Python 2.4 is used)
- * libusb 0.1 
+ * PyUSB
  
 Since libusb is available on most Linux, Mac OS X and FreeBSD cp210x-program
 should run flawlessly on these platforms. Currently it is only tested on
