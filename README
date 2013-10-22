@@ -24,7 +24,7 @@ can be used to access further functions of the CP210x like the general IO pins
 of the CP2103. The goal is not to provide an tty driver, such driver exists
 already for linux and BSD.
 
-Version: 0.1
+Version: 0.3
 Author: Johannes Hölzl <johannes.hoelzl@gmx.de>
 
 Dependencies
