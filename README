@@ -45,7 +45,7 @@ Usage
 -----
 
 Read EEPROM content into hexfile:
-$ cp210x-program --read-cp210x -F eeprom-content.hex
+$ cp210x-program --read-cp210x -f eeprom-content.hex
 
 Show EEPROM content from device 002 on bus 001:
 $ cp210x-program --read-cp210x -m 001/002
