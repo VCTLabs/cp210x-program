@@ -33,7 +33,7 @@ class HexFileError(Exception):
     pass
 
 def checksum(line):
-    return sum(ord(c) for c in line) & 0xFF
+    return sum((c) for c in line) & 0xFF
 
 def _int_value(position, size, read=lambda x:x, write=lambda x:x):
     def get(self):
@@ -53,7 +53,7 @@ def _str_value(position, max_desc_size):
         encoded = value.encode('utf-16-le')
         desc_size = len(encoded) + 2
         assert desc_size <= max_desc_size
-        self.set(position, chr(desc_size) + '\x03' + encoded)
+        self.set(position, bytes([desc_size]) + b'\x03' + encoded)
         
     return property(get, set)
 
@@ -72,14 +72,14 @@ class EEPROM(object):
         cp210xDevice.set_eeprom_content(self.content)
             
     def parse_hex_file(self, hex_content):
-        self.content = ''
+        self.content = b''
         address = self.START_ADDRESS
         for tag in hex_content.split('\n'):
             if not tag.startswith(':'):
                 raise HexFileError("Line doesn't start with ':'")
             
             try:
-                content = tag[1:].decode('hex')
+                content = bytes.fromhex(tag[1:])
             except TypeError:
                 raise HexFileError("Hex data expected")
             
@@ -89,7 +89,7 @@ class EEPROM(object):
             if checksum(content) != 0:
                 raise HexFileError("Checksum error")
         
-            size = from_binary(content[0])
+            size = from_binary(content[0:1])
             tag_address = from_binary(content[1:3], le=False)
             tag_type = from_binary(content[3:4])
             line = content[4:-1]
@@ -114,14 +114,14 @@ class EEPROM(object):
             address = self.START_ADDRESS + tag_start
             tag = (to_binary(len(line), 1) + 
                    to_binary(address, le=False) + 
-                   '\x00' + 
+                   b'\x00' + 
                    line)
             cs = checksum(tag)
             if cs == 0:
-                tag += '\x00'
+                tag += b'\x00'
             else:
-                tag += chr(0x100 - cs)
-            yield ":%s\n" % tag.encode('hex')
+                tag += bytes([0x100 - cs])
+            yield ":%s\n" % tag.hex()
         yield ":00000001FF\n"
 
     def write_hex_file(self, f):

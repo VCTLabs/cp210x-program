@@ -92,14 +92,14 @@ def from_binary(data, le=True):
     return value
 
 def to_binary(value, size=2, le=True):
-    data = ''
+    data = []
     for i in range(size):
-        data += chr(value & 0xFF)
+        data.append(value & 0xFF)
         value >>= 8
     if le:
-        return data
+        return bytes(data)
     else:
-        return data[::-1]
+        return bytes(data[::-1])
     
 def parse_baudrate_cfg(data):
     return (from_binary(data[0:2], le=False), 
