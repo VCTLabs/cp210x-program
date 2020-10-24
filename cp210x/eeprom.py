@@ -11,8 +11,8 @@ class EEPROM:
     of a CP210x. Also provides access to single fields in the EEPROM.
 """
 
-import cp210x
-from cp210x import from_binary, to_binary, VALUES
+from . import cp210x
+from .cp210x import from_binary, to_binary, VALUES
 
 __all__ = ['EEPROM', 'HexFileError']
 
@@ -29,7 +29,7 @@ POS_MAX_POWER       = 0x03A2
 POS_VENDOR_STRING   = 0x03C3
 POS_LOCK_VALUE      = 0x03FF
 
-class HexFileError(StandardError):
+class HexFileError(Exception):
     pass
 
 def checksum(line):
@@ -46,7 +46,7 @@ def _str_value(position, max_desc_size):
     def get(self):
         desc_size = from_binary(self.get(position, 1))
         assert desc_size <= max_desc_size and desc_size >= 2, "desc_size: %d, max: %d" % (desc_size, max_desc_size)
-        assert self.get(position + 1, 1) == '\x03', "Missing 0x03 at %04X" % (position + 1)
+        assert self.get(position + 1, 1) == b'\x03', "Missing 0x03 at %04X" % (position + 1)
         return self.get(position + 2, desc_size - 2).decode('utf-16-le')
         
     def set(self, value):
@@ -184,7 +184,7 @@ class EEPROM(object):
         return dict((name, getattr(self, name)) for name, type in VALUES)
 
     def set_values(self, values):
-        for name, value in values.items():
+        for name, value in list(values.items()):
             setattr(self, name, value)
 
             

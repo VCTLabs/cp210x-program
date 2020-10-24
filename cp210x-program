@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Copyright (c) 2007 Johannes Hölzl <johannes.hoelzl@gmx.de>
 #
@@ -20,7 +20,7 @@ import optparse
 from cp210x import valuefile, cp210x
 from cp210x.eeprom import EEPROM, HexFileError
 from cp210x.valuefile import read_baudrate_info, update_values, ValuesFileError
-TRANS_UNDERSCORE = string.maketrans('_', '-')
+TRANS_UNDERSCORE = str.maketrans('_', '-')
     
 ERR_OK = 0
 ERR_WRONG_INPUT = -1
@@ -37,14 +37,14 @@ def error(message, retval=-1):
 class Option(optparse.Option):
     TYPES = list(optparse.Option.TYPES)
     TYPE_CHECKER = dict(optparse.Option.TYPE_CHECKER)
-    for type, (reader, _) in valuefile.TYPES.items():
+    for type, (reader, _) in list(valuefile.TYPES.items()):
         if type in TYPES:
             continue
         TYPES.append(type)
         def checker(self, name, value, reader=reader):
             try:
                 return reader(value)
-            except ValueError, err:
+            except ValueError as err:
                 raise optparse.OptionValueError("option %s: %s" % (name,
                                                                    str(err)))
         TYPE_CHECKER[type] = checker
@@ -90,7 +90,7 @@ def options_to_values(options):
             try:
                 baudrate_table.append(read_baudrate_info(info) + 
                                       (int(baudrate), ))
-            except ValueError, err:
+            except ValueError as err:
                 error("option --set-baudrate: %s" % str(err), 
                       ERR_WRONG_INPUT)
             
@@ -242,19 +242,19 @@ if __name__ == '__main__':
         error("Can not write data to device. Device is locked.", 
               ERR_DEVICE_LOCKED)
 
-    except cp210x.Cp210xError, err:
+    except cp210x.Cp210xError as err:
         error(str(err), ERR_DEVICE_ERROR)
 
-    except IOError, err:
+    except IOError as err:
         error(str(err), ERR_OTHER)
 
-    except HexFileError, err:
+    except HexFileError as err:
         error(str(err), ERR_OTHER)
         
-    except ValuesFileError, err:
+    except ValuesFileError as err:
         error(str(err), ERR_OTHER)
 
-    except SystemExit, err:
+    except SystemExit as err:
         raise
 
     except:
