@@ -9,15 +9,15 @@
 # http://www.silabs.com/public/documents/tpub_doc/anote/Microcontrollers/Interface/en/an205.pdf
 
 import re
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
-import cp210x
-from cp210x import VALUES, SIZE_BAUDRATES
+from . import cp210x
+from .cp210x import VALUES, SIZE_BAUDRATES
 
 __all__ = ['read_file', 'write_file', 'update_values', 'PrescalerIsZero',
            'ValuesFileError']
 
-class ValuesError(StandardError):
+class ValuesError(Exception):
     pass
 
 class PrescalerIsZero(ValuesError):
@@ -89,13 +89,13 @@ def read_file(fp):
     values = {}
     
     for name, type in VALUES:
-        if name is 'baudrate_table':
+        if name == 'baudrate_table':
             continue
         reader, _ = TYPES[type]
         if cp.has_option('usb device', name):
             try:
                 values[name] = reader(cp.get('usb device', name))
-            except ValueError, err:
+            except ValueError as err:
                 raise ValuesFileError("Key '%s': %s" % (name, str(err)))
     
     if cp.has_section('baudrate table'):
@@ -108,7 +108,7 @@ def read_file(fp):
                                       " baudrate numbers.")
             try:
                 baudrate_table.append(read_baudrate_info(value) + (baudrate, ))
-            except ValueError, err:
+            except ValueError as err:
                 raise ValuesFileError("Wrong baudrate info %i: %s"
                                       % (baudrate, str(err)))
         baudrate_table.sort(key=(lambda i: i[3]), reverse=True)
