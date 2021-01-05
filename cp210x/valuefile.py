@@ -80,7 +80,7 @@ TYPES = {
 }
 
 def read_file(fp):
-    cp = ConfigParser()
+    cp = ConfigParser(inline_comment_prefixes=('#', ';'))
     if isinstance(fp, str):
         cp.read([fp])
     else:
