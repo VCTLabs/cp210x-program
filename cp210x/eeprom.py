@@ -161,7 +161,7 @@ class EEPROM(object):
     def _set_baudrate_table(self, baudrates):
         assert len(baudrates) == cp210x.SIZE_BAUDRATES
         self.set(POS_BAUDRATE_TABLE, 
-                 ''.join(cp210x.build_baudrate_cfg(*cfg) for cfg in baudrates))
+                 b"".join(cp210x.build_baudrate_cfg(*cfg) for cfg in baudrates))
     baudrate_table = property(_get_baudrate_table, _set_baudrate_table)
     product_string = _str_value(POS_PRODUCT_STRING, cp210x.SIZE_PRODUCT_STRING)
     serial_number = _str_value(POS_SERIAL_NUMBER, cp210x.SIZE_SERIAL_NUMBER)

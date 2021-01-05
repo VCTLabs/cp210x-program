@@ -109,7 +109,7 @@ def parse_baudrate_cfg(data):
 
 def build_baudrate_cfg(baudgen, timer0reload, prescaler, baudrate):
     return (to_binary(baudgen, le=False) + to_binary(timer0reload, le=False) + 
-            to_binary(prescaler, 1) + '\x00' + to_binary(baudrate, 4))
+            to_binary(prescaler, 1) + bytes([0]) + to_binary(baudrate, 4))
 
 class Cp210xError(IOError):
     pass
@@ -286,7 +286,7 @@ class Cp210xProgrammer(object):
         """
         assert len(content) == SIZE_EEPROM, ("EEPROM data must be %i bytes."
                                              % SIZE_EEPROM)
-        assert isinstance(content, str), "EEPROM data must be string."
+        assert isinstance(content, bytes), "EEPROM data must be bytes."
         self._set_config(REG_EEPROM, data=content)
     
     def set_product_id(self, pid):
