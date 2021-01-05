@@ -219,7 +219,7 @@ class Cp210xProgrammer(object):
     def _get_config(self, value, length, index=0, request=CP210x_CONFIG):
         res = self.usbdev.ctrl_transfer(CTRL_IN | CTRL_TYPE_VENDOR,
                                         request, value, index, length)
-        return res.tostring()
+        return res.tobytes()
 
     def _get_int8_config(self, value, index=0, request=CP210x_CONFIG):
         return ord(self._get_config(value, 1, index=index, request=request))
