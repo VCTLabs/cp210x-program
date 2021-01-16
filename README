@@ -41,6 +41,11 @@ If cp210x-program should run as non-root user, add the udev rule found in
 doc/45-cp210x-programming.rules to /etc/udev/rules.d. When devices with already
 programmed IDs are reprogrammed at this IDs to 45-cp210x-programming.rules.
 
+Install
+-------
+
+$ sudo apt install python3-usb
+
 Usage
 -----
 
@@ -55,6 +60,11 @@ $ cp210x-program --write-cp210x -m 10C4:EA62 \
                  --set-product-string="Product String" \
                  --set-max-power=100 \
                  --set-bus-powered=no
+
+Write default data to device
+$ cp210x-program --write-cp210x -F testdata/cp2102-orig.hex
+This is for example required when the baud rate table is corrupted and
+the CP210x always uses 500kBit/sec as baudrate.
 
 TODO
 ----
