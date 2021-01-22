@@ -214,7 +214,7 @@ class Cp210xProgrammer(object):
         encoded = content.encode('utf-16-le')
         desc_size = len(encoded) + 2
         assert desc_size <= max_desc_size
-        self._set_config(value, data=chr(desc_size) + "\x03" + encoded)
+        self._set_config(value, data=desc_size.to_bytes(1, 'big') + b"\x03" + encoded)
 
     def _get_config(self, value, length, index=0, request=CP210x_CONFIG):
         res = self.usbdev.ctrl_transfer(CTRL_IN | CTRL_TYPE_VENDOR,
