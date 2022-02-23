@@ -43,6 +43,6 @@ Requires:
         'cp210x'
     ],
     scripts=[
-        'cp210x-program'
+        'scripts/cp210x-program.py'
     ],
 )
