@@ -7,8 +7,6 @@
 Provides access to the EEPROM of a Silabs CP210x. The data can be directly
 read from or written to the device.
 """
-__license__ = "GNU LGPL"
-__version__ = "0.4"
 
 import sys
 import re
@@ -16,7 +14,7 @@ import string
 import traceback
 import optparse
 
-from cp210x import valuefile, cp210x
+from cp210x import valuefile, cp210x, __version__, __license__
 from cp210x.eeprom import EEPROM, HexFileError
 from cp210x.valuefile import read_baudrate_info, update_values, ValuesFileError
 TRANS_UNDERSCORE = str.maketrans('_', '-')
