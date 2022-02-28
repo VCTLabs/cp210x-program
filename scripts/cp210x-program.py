@@ -132,9 +132,15 @@ def find_device(patterns):
     
 def read_cp210x(options):
     usbdev = find_device(options.match)
+    print("USB find_device returned:\n{}".format(usbdev))
     dev = cp210x.Cp210xProgrammer(usbdev)
+    print("Cp210xProgrammer returned obj:\n{}".format(repr(dev)))
+
+    if isinstance(dev, cp210x.Cp210xProgrammer):
+        print("Cp210xProgrammer instance is valid!!")
 
     eeprom = EEPROM(dev)
+    print("EEPROM returned obj:\n{}".format(repr(eeprom)))
         
     if options.hex_output:
         eeprom.write_hex_file(output_file(options.hex_output))

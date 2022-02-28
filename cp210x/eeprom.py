@@ -152,17 +152,20 @@ class EEPROM(object):
         self.content = (self.content[:pos] + 
                         data + 
                         self.content[pos + len(data):])
-   
-    def _get_baudrate_table(self):
+
+    @property
+    def baudrate_table(self):
         dat = self.get(POS_BAUDRATE_TABLE, cp210x.SIZE_BAUDRATE_TABLE)
         return [cp210x.parse_baudrate_cfg(dat[pos:pos+cp210x.SIZE_BAUDRATE_CFG])
                 for pos in range(0, cp210x.SIZE_BAUDRATE_TABLE, 
                                  cp210x.SIZE_BAUDRATE_CFG)]
-    def _set_baudrate_table(self, baudrates):
+
+    @baudrate_table.setter
+    def baudrate_table(self, baudrates):
         assert len(baudrates) == cp210x.SIZE_BAUDRATES
         self.set(POS_BAUDRATE_TABLE, 
                  b"".join(cp210x.build_baudrate_cfg(*cfg) for cfg in baudrates))
-    baudrate_table = property(_get_baudrate_table, _set_baudrate_table)
+
     product_string = _str_value(POS_PRODUCT_STRING, cp210x.SIZE_PRODUCT_STRING)
     serial_number = _str_value(POS_SERIAL_NUMBER, cp210x.SIZE_SERIAL_NUMBER)
     part_number = _int_value(POS_PART_NUMBER, 1)

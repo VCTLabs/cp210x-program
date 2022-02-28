@@ -217,6 +217,7 @@ class Cp210xProgrammer(object):
         self._set_config(value, data=desc_size.to_bytes(1, 'big') + b"\x03" + encoded)
 
     def _get_config(self, value, length, index=0, request=CP210x_CONFIG):
+        print("usb ctrl msg: request, value, index, length:\n  {} {} {} {}".format(request, value, index, length))
         res = self.usbdev.ctrl_transfer(CTRL_IN | CTRL_TYPE_VENDOR,
                                         request, value, index, length)
         return res.tobytes()
@@ -238,7 +239,8 @@ class Cp210xProgrammer(object):
         """
         return self._get_config(REG_EEPROM, SIZE_BAUDRATE_TABLE)
 
-    def get_baudrate_table(self):
+    @property
+    def baudrate_table(self):
         """Get the baudrate table.
         
         A list containing 4-tuples is returned.
@@ -252,8 +254,9 @@ class Cp210xProgrammer(object):
         data = self.get_baudrate_content()
         return [parse_baudrate_cfg(data[pos:pos+SIZE_BAUDRATE_CFG])
                 for pos in range(0, SIZE_BAUDRATE_TABLE, SIZE_BAUDRATE_CFG)]
-        
-    def set_baudrate_table(self, baudrates):
+
+    @baudrate_table.setter
+    def baudrate_table(self, baudrates):
         """Write the baudrate table.
         
         See get_baudrate_table() for the structure of the table.
@@ -261,8 +264,7 @@ class Cp210xProgrammer(object):
         assert len(baudrates) == SIZE_BAUDRATES
         self.set_baudrate_content(data=''.join(build_baudrate_cfg(*cfg) 
                                                for cfg in baudrates))
-    baudrate_table = property(get_baudrate_table, set_baudrate_table)
-        
+
     def get_part_number(self):
         """Get the part number of the device.
         

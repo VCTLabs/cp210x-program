@@ -9,10 +9,12 @@ under Linux.
              YOUR CP210x USELESS OR DESTROY IT.  Be aware that the original
              (and current) version was only tested on CP2102.
 
-The CP210x is an USB-to-serial chip used in a lot of USB devices (similar to
-FTDIs and PL2303). The CP210x has a EEPROM on the chip which can be programmed
-via USB. Silabs provides already a library and gui programm to program this
-EEPROM, but only for windows. 
+The CP210x is a series of USB-to-serial chip used in a lot of USB devices
+(similar to FTDIs and PL2303). Certain CP210x devices have an EEPROM on
+the chip which can be programmed via USB, while others only have the OTP
+EPROM (which cannot be reprogrammed; see `Model notes`_). Silabs provides
+various source code examples for Windows and Linux, and multiple drivers
+for Windows.
 
 This project uses results from monitoring the USB bus when the windows library
 programms an CP210x. The windows library was not disassembled for this protocol
@@ -72,29 +74,45 @@ TODO
 * Test on other than CP2102
 * Implement CP2103 GIOP settings
 * Implement GUI
- 
+
+Model notes
+-----------
+
+Taken from the respective device Data Sheets:
+
+* CP2101 - EEPROM (512 byte)
+* CP2102 - EEPROM (1024 byte)
+* CP2103 - EEPROM (1024 byte)
+* CP2104 - EPROM only (1024 byte, not re-programmable)
+* CP2105 - EPROM only (296 byte, not re-programmable)
+* CP2109 - EPROM only (1024 byte, not re-programmable)
+* CP2102N - EEPROM (960 byte)
+
 Links
 -----
 
 * Original cp210x-program / CP210x Programmer project page by Petr Tesarik (a.k.a. tesarik)
   and Johannes Hölzl (a.k.a. johoelzl): https://sourceforge.net/projects/cp210x-program/
 
-* CP210x Product page on Silicon Labs: http://www.silabs.com/tgwWebApp/public/web_content/products/Microcontrollers/Interface/en/interface.htm
+* CP210N Product page and Data Sheet on Silicon Labs:
 
-* AN114 Customization Guide:
+https://www.silabs.com/interface/usb-bridges/usbxpress/device.cp2102n-gqfn20
+https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf
 
-http://www.silabs.com/public/documents/tpub_doc/anote/Microcontrollers/Interface/en/an144.pdf
-http://www.silabs.com/public/documents/software_doc/othersoftware/Microcontrollers/Interface/en/an144sw.zip
+* AN721 Device Customization Guide:
 
-* AN205 CP210x Baudrate Guide:
+https://www.silabs.com/documents/public/application-notes/AN721.pdf
+https://www.silabs.com/documents/public/example-code/AN721SW.zip
 
-http://www.silabs.com/public/documents/tpub_doc/anote/Microcontrollers/Interface/en/an205.pdf
-http://www.silabs.com/public/documents/software_doc/othersoftware/Microcontrollers/en/AN205SW.zip
+* AN197 CP210x Serial Communications Guide:
+
+https://www.silabs.com/documents/public/application-notes/an197.pdf
+https://www.silabs.com/documents/public/example-code/AN197SW.zip
     
 * AN223 Port Configuration and GPIO for CP210x
 
-http://www.silabs.com/public/documents/tpub_doc/anote/Microcontrollers/Interface/en/an223.pdf
-http://www.silabs.com/public/documents/software_doc/othersoftware/Microcontrollers/Interface/en/AN223SW.zip
+https://www.silabs.com/documents/public/application-notes/an223.pdf
+https://www.silabs.com/documents/public/example-code/AN223SW.zip
 
 License
 -------
