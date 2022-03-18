@@ -96,23 +96,23 @@ Links
 
 * CP210N Product page and Data Sheet on Silicon Labs:
 
-https://www.silabs.com/interface/usb-bridges/usbxpress/device.cp2102n-gqfn20
-https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf
+  + https://www.silabs.com/interface/usb-bridges/usbxpress/device.cp2102n-gqfn20
+  + https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf
 
 * AN721 Device Customization Guide:
 
-https://www.silabs.com/documents/public/application-notes/AN721.pdf
-https://www.silabs.com/documents/public/example-code/AN721SW.zip
+  + https://www.silabs.com/documents/public/application-notes/AN721.pdf
+  + https://www.silabs.com/documents/public/example-code/AN721SW.zip
 
 * AN197 CP210x Serial Communications Guide:
 
-https://www.silabs.com/documents/public/application-notes/an197.pdf
-https://www.silabs.com/documents/public/example-code/AN197SW.zip
+  + https://www.silabs.com/documents/public/application-notes/an197.pdf
+  + https://www.silabs.com/documents/public/example-code/AN197SW.zip
     
 * AN223 Port Configuration and GPIO for CP210x
 
-https://www.silabs.com/documents/public/application-notes/an223.pdf
-https://www.silabs.com/documents/public/example-code/AN223SW.zip
+  + https://www.silabs.com/documents/public/application-notes/an223.pdf
+  + https://www.silabs.com/documents/public/example-code/AN223SW.zip
 
 License
 -------
