@@ -80,13 +80,13 @@ Model notes
 
 Taken from the respective device Data Sheets:
 
-* CP2101 - EEPROM (512 byte)
-* CP2102 - EEPROM (1024 byte)
-* CP2103 - EEPROM (1024 byte)
+* CP2101 - EEPROM (512 byte)  *may work*
+* CP2102 - EEPROM (1024 byte)  *should work*
+* CP2103 - EEPROM (1024 byte)  *should work*
 * CP2104 - EPROM only (1024 byte, not re-programmable)
 * CP2105 - EPROM only (296 byte, not re-programmable)
 * CP2109 - EPROM only (1024 byte, not re-programmable)
-* CP2102N - EEPROM (960 byte)
+* CP2102N - EEPROM (960 byte) **does not work**
 
 Links
 -----
@@ -94,10 +94,16 @@ Links
 * Original cp210x-program / CP210x Programmer project page by Petr Tesarik (a.k.a. tesarik)
   and Johannes Hölzl (a.k.a. johoelzl): https://sourceforge.net/projects/cp210x-program/
 
-* CP210N Product page and Data Sheet on Silicon Labs:
+* CP2102N Product page and Data Sheet on Silicon Labs:
 
   + https://www.silabs.com/interface/usb-bridges/usbxpress/device.cp2102n-gqfn20
   + https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf
+
+* AN978 CP210x USB-to-UART API Specification:
+
+  + note this mainly documents HW/package and feature compatibility, amd only discusses
+    the (newer) CP2102N model as far as configuration byte layout
+  + https://www.silabs.com/documents/public/application-notes/an978-cp210x-usb-to-uart-api-specification.pdf
 
 * AN721 Device Customization Guide:
 
