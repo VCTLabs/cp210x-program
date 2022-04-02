@@ -41,20 +41,20 @@ def _int_value(position, size, read=lambda x:x, write=lambda x:x):
     def set(self, value):
         self.set(position, to_binary(write(value), size))
     return property(get, set)
-    
+
 def _str_value(position, max_desc_size):
     def get(self):
         desc_size = from_binary(self.get(position, 1))
         assert desc_size <= max_desc_size and desc_size >= 2, "desc_size: %d, max: %d" % (desc_size, max_desc_size)
         assert self.get(position + 1, 1) == b'\x03', "Missing 0x03 at %04X" % (position + 1)
         return self.get(position + 2, desc_size - 2).decode('utf-16-le')
-        
+
     def set(self, value):
         encoded = value.encode('utf-16-le')
         desc_size = len(encoded) + 2
         assert desc_size <= max_desc_size
         self.set(position, bytes([desc_size]) + b'\x03' + encoded)
-        
+
     return property(get, set)
 
 class EEPROM(object):
@@ -70,30 +70,30 @@ class EEPROM(object):
 
     def write_to_cp210x(self, cp210xDevice):
         cp210xDevice.set_eeprom_content(self.content)
-            
+
     def parse_hex_file(self, hex_content):
         self.content = b''
         address = self.START_ADDRESS
         for tag in hex_content.split('\n'):
             if not tag.startswith(':'):
                 raise HexFileError("Line doesn't start with ':'")
-            
+
             try:
                 content = bytes.fromhex(tag[1:])
             except TypeError:
                 raise HexFileError("Hex data expected")
-            
+
             if len(content) < 5:
                 raise HexFileError("Line too short")
 
             if checksum(content) != 0:
                 raise HexFileError("Checksum error")
-        
+
             size = from_binary(content[0:1])
             tag_address = from_binary(content[1:3], le=False)
             tag_type = from_binary(content[3:4])
             line = content[4:-1]
-            
+
             if tag_type == 0x00:
                 if tag_address != address:
                     raise HexFileError("Expected address %04X but found %04X"
@@ -104,7 +104,7 @@ class EEPROM(object):
                 if size != 0 or len(line) != 0:
                     raise HexFileError("Defect end tag")
                 break
-                
+
             else:
                 raise HexFileError("Unknown tag type %02X" % tag_type)
 
@@ -112,9 +112,9 @@ class EEPROM(object):
         for tag_start in range(0, len(self.content), 0x10):
             line = self.content[tag_start:tag_start+0x10]
             address = self.START_ADDRESS + tag_start
-            tag = (to_binary(len(line), 1) + 
-                   to_binary(address, le=False) + 
-                   b'\x00' + 
+            tag = (to_binary(len(line), 1) +
+                   to_binary(address, le=False) +
+                   b'\x00' +
                    line)
             cs = checksum(tag)
             if cs == 0:
@@ -147,23 +147,23 @@ class EEPROM(object):
 
     def get(self, pos, length):
         return self.content[pos:pos+length]
-    
+
     def set(self, pos, data):
-        self.content = (self.content[:pos] + 
-                        data + 
+        self.content = (self.content[:pos] +
+                        data +
                         self.content[pos + len(data):])
 
     @property
     def baudrate_table(self):
         dat = self.get(POS_BAUDRATE_TABLE, cp210x.SIZE_BAUDRATE_TABLE)
         return [cp210x.parse_baudrate_cfg(dat[pos:pos+cp210x.SIZE_BAUDRATE_CFG])
-                for pos in range(0, cp210x.SIZE_BAUDRATE_TABLE, 
+                for pos in range(0, cp210x.SIZE_BAUDRATE_TABLE,
                                  cp210x.SIZE_BAUDRATE_CFG)]
 
     @baudrate_table.setter
     def baudrate_table(self, baudrates):
         assert len(baudrates) == cp210x.SIZE_BAUDRATES
-        self.set(POS_BAUDRATE_TABLE, 
+        self.set(POS_BAUDRATE_TABLE,
                  b"".join(cp210x.build_baudrate_cfg(*cfg) for cfg in baudrates))
 
     product_string = _str_value(POS_PRODUCT_STRING, cp210x.SIZE_PRODUCT_STRING)
@@ -171,23 +171,21 @@ class EEPROM(object):
     part_number = _int_value(POS_PART_NUMBER, 1)
     vendor_id = _int_value(POS_VENDOR_ID, 2)
     product_id = _int_value(POS_PRODUCT_ID, 2)
-    version = _int_value(POS_VERSION, 2, 
+    version = _int_value(POS_VERSION, 2,
                          cp210x.from_bcd2, cp210x.to_bcd2)
-    bus_powered = _int_value(POS_CFG_ATTRIBUTES, 1, 
-                             lambda a: bool(a & 0x40), 
+    bus_powered = _int_value(POS_CFG_ATTRIBUTES, 1,
+                             lambda a: bool(a & 0x40),
                              lambda a: 0xC0 if a else 0x80)
     max_power = _int_value(POS_MAX_POWER, 1, lambda p: p*2, cp210x.to_div2)
     vendor_string = _str_value(POS_VENDOR_STRING, cp210x.SIZE_VENDOR_STRING)
-    locked = _int_value(POS_LOCK_VALUE, 1, 
-                        lambda l: l == cp210x.LCK_LOCKED, 
+    locked = _int_value(POS_LOCK_VALUE, 1,
+                        lambda l: l == cp210x.LCK_LOCKED,
                         lambda b: cp210x.LCK_LOCKED if b
                                   else cp210x.LCK_UNLOCKED)
-        
+
     def get_values(self):
         return dict((name, getattr(self, name)) for name, type in VALUES)
 
     def set_values(self, values):
         for name, value in list(values.items()):
             setattr(self, name, value)
-
-            

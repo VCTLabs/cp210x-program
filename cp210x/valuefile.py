@@ -85,9 +85,9 @@ def read_file(fp):
         cp.read([fp])
     else:
         cp.readfp(fp)
-    
+
     values = {}
-    
+
     for name, type in VALUES:
         if name == 'baudrate_table':
             continue
@@ -97,7 +97,7 @@ def read_file(fp):
                 values[name] = reader(cp.get('usb device', name))
             except ValueError as err:
                 raise ValuesFileError("Key '%s': %s" % (name, str(err)))
-    
+
     if cp.has_section('baudrate table'):
         baudrate_table = []
         for name, value in cp.items('baudrate table'):
@@ -112,13 +112,13 @@ def read_file(fp):
                 raise ValuesFileError("Wrong baudrate info %i: %s"
                                       % (baudrate, str(err)))
         baudrate_table.sort(key=(lambda i: i[3]), reverse=True)
-        
+
         values['baudrate_table'] = baudrate_table
     return values
 
 def write_file(fp, values):
     fp.write("[usb device]\n")
-    
+
     for name, type in VALUES:
         if name == 'baudrate_table':
             continue
@@ -129,7 +129,7 @@ def write_file(fp, values):
     if 'baudrate_table' in values:
         fp.write("\n")
         fp.write("[baudrate table]\n")
-        for (baudgen, timegen, prescaler, 
+        for (baudgen, timegen, prescaler,
              baudrate) in sorted(values['baudrate_table'], key=(lambda i: i[3]),
                                  reverse=True):
             fp.write("%7d = %04X, %04X, %d # %s\n"
@@ -160,42 +160,42 @@ def show_baudrate(baudgen, timegen, prescaler):
 def update_values(v, new, dev):
     old_baudrate_table = v.get('baudrate_table')
     new_baudrate_table = new.get('baudrate_table')
-    
+
     v.update(new)
 
     # update baudrate table
     # it is needed, that the baudrate table has 32 entries when it is written
     # to the eeprom or device.
     if ((old_baudrate_table is not None or new_baudrate_table is not None) and
-        (new_baudrate_table is None or 
+        (new_baudrate_table is None or
          len(new_baudrate_table) < SIZE_BAUDRATES)):
-         
+
         if old_baudrate_table is not None:
             if len(old_baudrate_table) < SIZE_BAUDRATES:
                 baudrate_table = old_baudrate_table
             else:
-                baudrate_table = list(merge_baudrate_table(dev.baudrate_table, 
+                baudrate_table = list(merge_baudrate_table(dev.baudrate_table,
                                                            old_baudrate_table))
         else:
             baudrate_table = dev.baudrate_table
-                                                               
+
         if new_baudrate_table:
-            baudrate_table = list(merge_baudrate_table(baudrate_table, 
-                                                       new_baudrate_table))        
+            baudrate_table = list(merge_baudrate_table(baudrate_table,
+                                                       new_baudrate_table))
         v['baudrate_table'] = baudrate_table
-    
-            
-            
+
+
+
 def merge_baudrate_table(old, new):
     for (old_info, (start, stop)) in zip(old, REQUEST_BAUDRATE_RANGES):
         for baudgen, timer, prescaler, baudrate in new:
-            if ((start is None or baudrate <= start) and 
+            if ((start is None or baudrate <= start) and
                 baudrate >= stop):
                 yield (baudgen, timer, prescaler, baudrate)
                 break
         else:
             yield old_info
-            
+
 REQUEST_BAUDRATE_RANGES = [
 # The table data is from AN205 Table 1 on page 1.
 #     Start     End       Default Baudrate

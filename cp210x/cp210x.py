@@ -68,7 +68,7 @@ def to_div2(p):
     if (value * 2) < p:
         value += 1
     return value
-    
+
 def to_bcd(i):
     assert i >= 0 and i <= 99
     return (i // 10) << 4 | (i % 10)
@@ -100,15 +100,15 @@ def to_binary(value, size=2, le=True):
         return bytes(data)
     else:
         return bytes(data[::-1])
-    
+
 def parse_baudrate_cfg(data):
-    return (from_binary(data[0:2], le=False), 
-            from_binary(data[2:4], le=False), 
+    return (from_binary(data[0:2], le=False),
+            from_binary(data[2:4], le=False),
             from_binary(data[4:5]),
             from_binary(data[6:10]))
 
 def build_baudrate_cfg(baudgen, timer0reload, prescaler, baudrate):
-    return (to_binary(baudgen, le=False) + to_binary(timer0reload, le=False) + 
+    return (to_binary(baudgen, le=False) + to_binary(timer0reload, le=False) +
             to_binary(prescaler, 1) + bytes([0]) + to_binary(baudrate, 4))
 
 class Cp210xError(IOError):
@@ -131,9 +131,9 @@ class Cp210xMatch(object):
 
 class Cp210xProgrammer(object):
     """Program a Silabs CP2101, CP2102 or CP2103
-    
+
     This module provides access to Silabs CP210x devices to set some USB
-    descriptor fields and some USB descriptor strings. 
+    descriptor fields and some USB descriptor strings.
 
     The following fields can be set:
 
@@ -144,34 +144,34 @@ class Cp210xProgrammer(object):
      * Device Version
      * Bus Powered
      * max. Power consumption
- 
+
     Either use PyUSB to find a device, and pass the usb.Device object
     to the constructor, or use Cp210xProgrammer.list_device() to list all
     devices matching certain pattern.
     """
-    
+
     TIMEOUT = 300 #ms
-    
+
     @classmethod
-    def list_devices(self, patterns=[{ 'idVendor': VID_SILABS, 
+    def list_devices(self, patterns=[{ 'idVendor': VID_SILABS,
                                        'idProduct': PID_CP210x }]):
         """Yields a list of devices matching certain patterns.
-        
+
         param patterns: This must be a list of dictionaries. Each device
-            in the usb tree is matched against all patterns in the list. 
-            
+            in the usb tree is matched against all patterns in the list.
+
             All fields of the descriptors are compared with the corresponding
             values in the dictionary. A device matches the pattern only if all
             values match.
-        
+
         For example:
 
-        >> list(Cp210xProgrammer.list_device([{ 'idVendor': VID_SILABS, 
+        >> list(Cp210xProgrammer.list_device([{ 'idVendor': VID_SILABS,
                                            'idProduct': PID_CP210x }]))
         [device(...)]
-        
+
         """
-        
+
         return usb.core.find(find_all=True,
                              custom_match=Cp210xMatch(patterns))
 
@@ -185,16 +185,16 @@ class Cp210xProgrammer(object):
             self.intf = cfg[(0,0)].bInterfaceNumber
             usbdev.detach_kernel_driver(self.intf)
         usbdev.set_configuration()
-        
+
     def reset(self):
         """Force the USB stack to reset the device.
-        
+
         Resets the device through an hard reset over the port to which the
         device is connected. After that happend the EEPROM content in the device
         is reread and the device's descriptors are the one written to it.
         """
         self.usbdev.reset()
-    
+
     def __del__(self):
         if self.has_kernel_driver:
             self.usbdev.attach_kernel_driver(self.intf)
@@ -202,7 +202,7 @@ class Cp210xProgrammer(object):
     def _set_config(self, value, index=0, data=None, request=CP210x_CONFIG):
         if self.get_locked():
             raise DeviceLocked()
-            
+
         res = self.usbdev.ctrl_transfer(CTRL_OUT | CTRL_TYPE_VENDOR,
                                         request, value, index, data)
         if data is not None and res != len(data):
@@ -228,12 +228,12 @@ class Cp210xProgrammer(object):
     def _get_int16_config(self, value, index=0, request=CP210x_CONFIG):
         data = self._get_config(value, 2, index=index, request=request)
         return ord(data[0]) << 8 | ord(data[1])
-    
+
     def get_eeprom_content(self):
         """Get the entire EEPROM content as one big 1024-byte blob.
         """
         return self._get_config(REG_EEPROM, SIZE_EEPROM)
-    
+
     def get_baudrate_content(self):
         """Get the baudrate table as binary data.
         """
@@ -242,10 +242,10 @@ class Cp210xProgrammer(object):
     @property
     def baudrate_table(self):
         """Get the baudrate table.
-        
+
         A list containing 4-tuples is returned.
         Each tuple contains the following data:
-        
+
          * BaudGen: Value used to generate the baudrate.
          * Time0Reset: Value used to generate the usb timeout.
          * Prescaler: Used to down-scale the baudrate.
@@ -258,31 +258,31 @@ class Cp210xProgrammer(object):
     @baudrate_table.setter
     def baudrate_table(self, baudrates):
         """Write the baudrate table.
-        
+
         See get_baudrate_table() for the structure of the table.
         """
         assert len(baudrates) == SIZE_BAUDRATES
-        self.set_baudrate_content(data=''.join(build_baudrate_cfg(*cfg) 
+        self.set_baudrate_content(data=''.join(build_baudrate_cfg(*cfg)
                                                for cfg in baudrates))
 
     def get_part_number(self):
         """Get the part number of the device.
-        
+
         Returns: 1 for a CP2101
                  2 for a CP2102
                  3 for a CP2103
         """
         return self._get_int8_config(REG_PART_NUMBER)
-    
+
     def get_locked(self):
         """Read the lock value of the device.
-        
+
         When True is returnes no data can be written to the device.
         """
         if self._locked is None:
             self._locked = self._get_int8_config(REG_LOCK_VALUE) == LCK_LOCKED
         return self._locked
-    
+
     def set_eeprom_content(self, content):
         """Write a 1024-byte blob to the EEPROM
         """
@@ -290,47 +290,47 @@ class Cp210xProgrammer(object):
                                              % SIZE_EEPROM)
         assert isinstance(content, bytes), "EEPROM data must be bytes."
         self._set_config(REG_EEPROM, data=content)
-    
+
     def set_product_id(self, pid):
         """Set the Product ID
         """
         assert pid > 0x0000 and pid < 0xFFFF
         self._set_config(REG_PRODUCT_ID, pid)
-        
+
     def set_vendor_id(self, vid):
         """Set the Vendor ID
         """
         assert vid > 0x0000 and vid < 0xFFFF
         self._set_config(REG_VENDOR_ID, vid)
-    
+
     def set_product_string(self, product_string):
         """Set the product string.
-        
+
         The string will be encoded with UTF-16 and must not exceed
         CP210x_MAX_PRODUCT_STRLEN.
         For Unicode Plane 0 (BMP; code points 0-FFFF), this specifies
         the maximum length of the string in characters.
         """
-        self._set_config_string(REG_PRODUCT_STRING, product_string, 
+        self._set_config_string(REG_PRODUCT_STRING, product_string,
                                 SIZE_PRODUCT_STRING)
-    
+
     def set_serial_number(self, serial_number):
         """Set the serial number string.
-        
+
         The string will be encoded with UTF-16 and must not exceed
         CP210x_MAX_SERIAL_STRLEN.
         For Unicode Plane 0 (BMP; code points 0-FFFF), this specifies
         the maximum length of the string in characters.
         """
-        self._set_config_string(REG_SERIAL_NUMBER, serial_number, 
+        self._set_config_string(REG_SERIAL_NUMBER, serial_number,
                                 SIZE_SERIAL_NUMBER)
-    
+
     def set_max_power(self, max_power):
         """Set maximum power consumption.
         """
         assert max_power >= 0 and max_power <= 500
         self._set_config(REG_MAX_POWER, to_div2(max_power))
-    
+
     def set_bus_powered(self, bus_powered):
         """Set the bus-powered flag in the device descriptor.
         """
@@ -346,7 +346,7 @@ class Cp210xProgrammer(object):
 
     def set_locked(self, locked):
         """Set the lock value of the device.
-        
+
         When True is returned no data can be written to the device.
         """
         if locked:
@@ -358,4 +358,3 @@ class Cp210xProgrammer(object):
         for name, value in list(values.items()):
             if name not in ['part_number', 'vendor_string']:
                 getattr(self, "set_" + name) (value)
-            

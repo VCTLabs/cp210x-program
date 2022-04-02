@@ -18,7 +18,7 @@ from cp210x import valuefile, cp210x, __version__, __license__
 from cp210x.eeprom import EEPROM, HexFileError
 from cp210x.valuefile import read_baudrate_info, update_values, ValuesFileError
 TRANS_UNDERSCORE = str.maketrans('_', '-')
-    
+
 ERR_OK = 0
 ERR_WRONG_INPUT = -1
 ERR_INTERNAL = -2
@@ -30,7 +30,7 @@ ERR_OTHER = -100
 def error(message, retval=-1):
     sys.stderr.write(message + "\n")
     sys.exit(retval)
-    
+
 class Option(optparse.Option):
     TYPES = list(optparse.Option.TYPES)
     TYPE_CHECKER = dict(optparse.Option.TYPE_CHECKER)
@@ -45,7 +45,7 @@ class Option(optparse.Option):
                 raise optparse.OptionValueError("option %s: %s" % (name,
                                                                    str(err)))
         TYPE_CHECKER[type] = checker
-    
+
 class OptionParser(optparse.OptionParser):
     def error(self, msg):
         error(msg, ERR_WRONG_INPUT)
@@ -54,7 +54,7 @@ class OptionParser(optparse.OptionParser):
         if 'option_class' not in kwargs:
             kwargs['option_class'] = Option
         optparse.OptionParser.__init__(self, *args, **kwargs)
-        
+
 def input_file(arg):
     if arg is None or arg == '-':
         return sys.stdin
@@ -75,7 +75,7 @@ def options_to_values(options):
         value = getattr(options, name)
         if value is not None:
             values[name] = value
-      
+
     if options.baudrate_table:
         baudrate_table = []
         for s in options.baudrate_table:
@@ -85,12 +85,12 @@ def options_to_values(options):
                 error("option --set-baudrate: requires two parts separated by ':'",
                       ERR_WRONG_INPUT)
             try:
-                baudrate_table.append(read_baudrate_info(info) + 
+                baudrate_table.append(read_baudrate_info(info) +
                                       (int(baudrate), ))
             except ValueError as err:
-                error("option --set-baudrate: %s" % str(err), 
+                error("option --set-baudrate: %s" % str(err),
                       ERR_WRONG_INPUT)
-            
+
         values['baudrate_table'] = baudrate_table
     return values
 
@@ -102,11 +102,11 @@ def find_device(patterns):
                 vidString, pidString = pattern.split(':')
                 vid = int(vidString, 16)
                 pid = int(pidString, 16)
-                
+
             except (TypeError, ValueError):
                 error("Match must be either 'ddd/ddd' or 'hhhh:hhhh'.",
                       ERR_WRONG_INPUT)
-                
+
             usb_patterns.append(dict(idVendor=vid, idProduct=pid))
 
         elif '/' in pattern:
@@ -124,12 +124,12 @@ def find_device(patterns):
         else:
             error("Match must be either 'ddd/ddd' or 'hhhh:hhhh'.",
                   ERR_WRONG_INPUT)
-                  
+
     for dev in cp210x.Cp210xProgrammer.list_devices(usb_patterns):
         return dev
 
     error("No devices found", ERR_DEVICE_NOT_FOUND)
-    
+
 def read_cp210x(options):
     usbdev = find_device(options.match)
     print("USB find_device returned:\n{}".format(usbdev))
@@ -141,7 +141,7 @@ def read_cp210x(options):
 
     eeprom = EEPROM(dev)
     print("EEPROM returned obj:\n{}".format(repr(eeprom)))
-        
+
     if options.hex_output:
         eeprom.write_hex_file(output_file(options.hex_output))
     if options.ini_output or not options.hex_output:
@@ -152,19 +152,19 @@ def write_cp210x(options):
     dev = cp210x.Cp210xProgrammer(usbdev)
 
     if options.hex_input or options.force_eeprom:
-                
+
             if options.hex_input:
                 eeprom = EEPROM(input_file(options.hex_input))
             else:
                 eeprom = EEPROM(dev)
-                
+
             values = eeprom.get_values()
             if options.ini_input:
                 values = valuefile.read_file(input_file(options.ini_input))
             update_values(values, options_to_values(options), eeprom)
-            
+
             eeprom.set_values(values)
-            
+
             eeprom.write_to_cp210x(dev)
 
     else:
@@ -174,7 +174,7 @@ def write_cp210x(options):
                 values = {}
             update_values(values, options_to_values(options), dev)
             dev.set_values(values)
-            
+
     if options.reset_device:
         dev.reset()
 
@@ -182,22 +182,22 @@ def change_hexfile(options):
     eeprom = EEPROM(input_file(options.hex_input))
     values =  {}
     if options.ini_input:
-        update_values(values, 
-                      valuefile.read_file(input_file(options.ini_input)), 
+        update_values(values,
+                      valuefile.read_file(input_file(options.ini_input)),
                       eeprom)
     update_values(values, options_to_values(options), eeprom)
     eeprom.set_values(values)
     if options.ini_output:
-        valuefile.write_file(output_file(options.ini_output), 
+        valuefile.write_file(output_file(options.ini_output),
                              eeprom.get_values())
     eeprom.write_hex_file(output_file(options.hex_output))
-    
+
 def parse_hexfile(options):
     eeprom = EEPROM(input_file(options.hex_input))
     valuefile.write_file(output_file(options.ini_output), eeprom.get_values())
-        
+
 parser = OptionParser(version=__version__, description=__doc__)
-parser.add_option("-r", "--read-cp210x", const=read_cp210x, 
+parser.add_option("-r", "--read-cp210x", const=read_cp210x,
                   dest="action", action="store_const")
 parser.add_option("-w", "--write-cp210x", const=write_cp210x,
                   dest="action", action="store_const")
@@ -212,7 +212,7 @@ parser.add_option("-i", "--ini-output", metavar="FILE")
 for name, type in cp210x.VALUES:
     if name == 'baudrate_table':
         continue
-    parser.add_option("--set-" + name.translate(TRANS_UNDERSCORE), 
+    parser.add_option("--set-" + name.translate(TRANS_UNDERSCORE),
                       dest=name, metavar=name.upper(), type=type)
 parser.add_option("--set-baudrate", action="append", dest="baudrate_table")
 parser.add_option("-m", "--match", action="append", metavar="PATTERN")
@@ -240,7 +240,7 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-        
+
     except cp210x.DeviceLocked:
         error("Cannot write data to device. Device is locked.",
               ERR_DEVICE_LOCKED)
@@ -253,7 +253,7 @@ if __name__ == '__main__':
 
     except HexFileError as err:
         error(str(err), ERR_OTHER)
-        
+
     except ValuesFileError as err:
         error(str(err), ERR_OTHER)
 
@@ -263,4 +263,3 @@ if __name__ == '__main__':
     except:
         traceback.print_exc()
         sys.exit(ERR_INTERNAL)
-        

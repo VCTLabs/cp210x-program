@@ -30,7 +30,7 @@ Dependencies
 
 * Python >= 3
 * PyUSB
- 
+
 Since libusb is available on most Linux, Mac OS X and FreeBSD cp210x-program
 should run flawlessly on these platforms. Currently it is only tested on
 Linux 2.6 (Ubuntu).
@@ -114,7 +114,7 @@ Links
 
   + https://www.silabs.com/documents/public/application-notes/an197.pdf
   + https://www.silabs.com/documents/public/example-code/AN197SW.zip
-    
+
 * AN223 Port Configuration and GPIO for CP210x
 
   + https://www.silabs.com/documents/public/application-notes/an223.pdf

@@ -1,0 +1,28 @@
+# To install the git pre-commit hook run:
+#   pre-commit install
+# To update the pre-commit hooks run:
+#   pre-commit install-hooks
+repos:
+  - repo: meta
+    hooks:
+      - id: check-useless-excludes
+      - id: check-hooks-apply
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: debug-statements
+      - id: requirements-txt-fixer
+      - id: fix-encoding-pragma
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+        #exclude: '(.*examples/.*)'
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      #- id: check-toml
+      #- id: check-json
+      - id: check-yaml
+        #exclude: '(conda/meta.yaml|.pep8speaks.yml)'
