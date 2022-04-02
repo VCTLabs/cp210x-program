@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
+
 import usb.core
 import usb.util
-
 
 dev = usb.core.find(idVendor = 0x10c4)  # Silicon Labs
 if not dev:

@@ -11,7 +11,7 @@
 import re
 from configparser import ConfigParser
 
-from .cp210x import VALUES, SIZE_BAUDRATES
+from .cp210x import SIZE_BAUDRATES, VALUES
 
 __all__ = [
     'read_file',

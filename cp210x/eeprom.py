@@ -12,7 +12,7 @@ class EEPROM:
 """
 
 from . import cp210x
-from .cp210x import from_binary, to_binary, VALUES
+from .cp210x import VALUES, from_binary, to_binary
 
 __all__ = ['EEPROM', 'HexFileError']
 

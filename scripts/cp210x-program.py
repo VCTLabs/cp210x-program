@@ -8,15 +8,20 @@ Provides access to the EEPROM of a Silabs CP210x. The data can be directly
 read from or written to the device.
 """
 
-import sys
+import optparse
 import re
 import string
+import sys
 import traceback
-import optparse
 
-from cp210x import valuefile, cp210x, __version__, __license__
+from cp210x import __license__, __version__, cp210x, valuefile
 from cp210x.eeprom import EEPROM, HexFileError
-from cp210x.valuefile import read_baudrate_info, update_values, ValuesFileError
+from cp210x.valuefile import (
+    ValuesFileError,
+    read_baudrate_info,
+    update_values,
+)
+
 TRANS_UNDERSCORE = str.maketrans('_', '-')
 
 ERR_OK = 0
