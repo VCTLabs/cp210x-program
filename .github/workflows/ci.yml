@@ -16,12 +16,12 @@ jobs:
     env:
       OS: ${{ matrix.os }}
       PYTHON: ${{ matrix.python-version }}
-      PYTHONIOENCODING: utf-8
+      #PYTHONIOENCODING: utf-8
       PIP_DOWNLOAD_CACHE: ${{ github.workspace }}/../.pip_download_cache
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macos-latest]
+        os: [ubuntu-20.04, macos-latest, windows-latest]
         python-version: [3.6, 3.7, 3.8, 3.9]
     steps:
     - name: Set git crlf/eol
