@@ -19,10 +19,79 @@ repos:
       - id: fix-encoding-pragma
       - id: trailing-whitespace
       - id: end-of-file-fixer
-        #exclude: '(.*examples/.*)'
       - id: mixed-line-ending
         args: [--fix=lf]
       #- id: check-toml
       #- id: check-json
       - id: check-yaml
         #exclude: '(conda/meta.yaml|.pep8speaks.yml)'
+
+  - repo: https://github.com/PyCQA/doc8
+    rev: 0.9.1
+    hooks:
+      - id: doc8
+        args:
+          - '--max-line-length=110'
+          - '--ignore=D001'
+
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.9.0
+    hooks:
+      - id: rst-backticks
+        # exclude: ChangeLog\.rst$
+      - id: rst-directive-colons
+      - id: rst-inline-touching-normal
+
+#  - repo: https://github.com/pycqa/isort
+#    rev: 5.5.4
+#    hooks:
+#      - id: isort
+#        args: [--settings-path=setup.cfg]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.910-1
+    hooks:
+    - id: mypy
+      additional_dependencies:
+        - pyusb
+      args:
+        - --follow-imports=normal
+        - --install-types
+        - --non-interactive
+      files: ^cp210x.*\.py$
+
+  - repo: https://github.com/myint/autoflake
+    rev: v1.4
+    hooks:
+      - id: autoflake
+        files: ^cp210x.*\.py$
+        args:
+          - --in-place
+          - --remove-duplicate-keys
+          - --remove-unused-variables
+
+  # use ffffff (black fork) for single quote normalization
+  # (otherwise switch to black for double quotes)
+  - repo: https://github.com/grktsh/ffffff
+    rev: v2020.8.31
+    hooks:
+      - id: ffffff
+        name: "Format code (ffffff)"
+        files: ^cp210x.*\.py$
+        language_version: python3
+
+ci:
+    autofix_commit_msg: |
+        [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+        for more information, see https://pre-commit.ci
+    autofix_prs: false
+    autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+    autoupdate_schedule: weekly
+    skip: []
+    submodules: false
+
+# re-running a pull request: you can trigger a re-run on a pull request by
+#    commenting pre-commit.ci run (must appear on a line by itself).
+# skipping push runs: skip a run by putting [skip ci], [ci skip],
+#    [skip pre-commit.ci], or [pre-commit.ci skip] in the commit message.
