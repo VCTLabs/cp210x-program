@@ -77,6 +77,7 @@ orig_hex_data_bytes = bytes(orig_hex_data.encode('utf-8'))
 orig_hex_file = "cp2102-orig.hex"
 
 out_file = 'test.out'
+stdout_file = 'test2.out'
 out_path = Path('testdata')
 
 
@@ -94,6 +95,14 @@ def test_bin_file_io():
 
 def test_hex_file_output():
     outfile = out_path.joinpath(out_file)
+
+    #for child in out_path.iterdir(): print(child)
+    assert outfile.read_text() == orig_hex_data
+    assert outfile.read_bytes() == orig_hex_data_bytes
+
+
+def test_hex_file_stdout():
+    outfile = out_path.joinpath(stdout_file)
 
     #for child in out_path.iterdir(): print(child)
     assert outfile.read_text() == orig_hex_data
