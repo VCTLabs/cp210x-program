@@ -147,7 +147,12 @@ class EEPROM(object):
         else:
             do_close = False
         for line in self.build_hex_file():
-            f.write(line)
+            if do_close:
+                f.write(line)
+            else:
+                line = bytes(line.encode('utf-8'))
+                f.buffer.write(line)
+                f.flush()
         if do_close:
             f.close()
 

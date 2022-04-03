@@ -70,7 +70,7 @@ def output_file(arg):
     if arg is None or arg == '-':
         return sys.stdout
     else:
-        return open(arg, 'w')
+        return open(arg, 'w', newline='\n')
 
 def options_to_values(options):
     values = {}

@@ -76,7 +76,7 @@ orig_hex_data = '''\
 orig_hex_data_bytes = bytes(orig_hex_data.encode('utf-8'))
 orig_hex_file = "cp2102-orig.hex"
 
-out_file = 'test.hex'
+out_file = 'test.out'
 out_path = Path('testdata')
 
 
