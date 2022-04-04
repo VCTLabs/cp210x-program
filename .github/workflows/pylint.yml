@@ -13,9 +13,28 @@ jobs:
     defaults:
       run:
         shell: bash
+    outputs:
+      branch: ${{ steps.extract_branch.outputs.branch }}
+      rating: ${{ steps.analyze.outputs.rating }}
+      path: ${{ steps.analyze.outputs.path }}
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Extract base branch name
+      id: extract_branch
+      shell: bash
+      run: |
+        TMP_PULL_BASE_REF="${{ github.base_ref }}"
+        TMP_GITHUB_REF="${GITHUB_REF#refs/heads/}"
+        EXPORT_VALUE=""
+        if [ "${TMP_PULL_BASE_REF}" != "" ]
+        then
+            EXPORT_VALUE="${TMP_PULL_BASE_REF}"
+        else
+            EXPORT_VALUE="${TMP_GITHUB_REF}"
+        fi
+        echo "##[set-output name=branch;]${EXPORT_VALUE}"
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
@@ -28,35 +47,66 @@ jobs:
         pip install tox tox-gh-actions
 
     - name: Run pylint
-      id: pylint
+      id: analyze
+      env:
+        BADGE_PATH: badges/pylint-score.svg
       run: |
         rating=$(bash -c 'tox -e lint' | grep 'Your code has been rated at' | cut -f7 -d " ")
+        echo "Pylint score: ${rating}"
         echo "##[set-output name=rating;]${rating}"
-        mkdir -p "${BADGE_PATH%/*}"
         echo "##[set-output name=path;]${BADGE_PATH}"
-      env:
-        BADGE_PATH: .github/badges/pylint-score.svg
 
+  badge:
+    # Only generate and publish if these conditions are met:
+    # - The previous job/analyze step ended successfully
+    # - At least one of these is true:
+    #   - This is a push event and the push event is on branch 'master' or 'develop'
+    # Note: if this repo is personal (ie, not an org repo) then you can
+    #       use the following to change the scope of the next 2 jobs
+    #       instead of running on branch push as shown below:
+    #   - This is a pull request event and the pull actor is the same as the repo owner
+    #     if: ${{ ( github.event_name == 'pull_request' && github.actor == github.repository_owner ) || github.ref == 'refs/heads/master' }}
+    name: Generate badge image with pylint score
+    runs-on: ubuntu-20.04
+    needs: [pylint]
+    if: ${{ github.event_name == 'push' }}
+    #outputs:
+      #url: ${{ steps.url.outputs.url }}
+      #markdown: ${{ steps.url.outputs.markdown }}
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: badges
+        path: badges
+
+    # Use the output from the `analyze` step
     - name: Create pylint badge
       uses: emibcn/badge-action@v1
+      id: badge
       with:
         label: 'Pylint score'
-        status: ${{ steps.pylint.outputs.rating }}
+        status: ${{ needs.pylint.outputs.rating }}
         color: 'green'
-        path: .github/badges/pylint-score.svg
+        path: ${{ needs.pylint.outputs.path }}
 
-    - name: Commit badges
-      continue-on-error: true
+    - name: Commit badge
+      env:
+        BRANCH: ${{ needs.pylint.outputs.branch }}
+        FILE: 'pylint-score.svg'
+      working-directory: ./badges
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add .github/badges/
-        git commit -m "Update Badges"
+        mkdir -p "${BRANCH}"
+        mv "${FILE}" "${BRANCH}"
+        git add "${BRANCH}/${FILE}"
+        # Will give error if badge has not changed
+        git commit -m "Add/Update badge" || true
 
     - name: Push badge commit
       uses: ad-m/github-push-action@master
-      if: ${{ success() }}
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: badges
-        force: true
+        directory: badges

@@ -2,12 +2,16 @@
  cp210x-program
 ================
 
+|ci| |wheels| |release| |badge|
+
+|tag| |license| |python| |pylint|
+
 The goal of this library is to provide access to the EEPROM of an Silabs CP210x
 under Linux.
 
-.. warning:: THIS VERSION OF cp210x-program IS NOT FULLY TESTED. IT MAY RENDER
-             YOUR CP210x USELESS OR DESTROY IT.  Be aware that the original
-             (and current) version was only tested on CP2102.
+.. warning:: THE LEGACY VERSION OF cp210x-program IS NOT FULLY TESTED. IT MAY RENDER
+             YOUR CP210x USELESS OR DESTROY IT.  Be aware that the current
+             (legacy) version was only tested on CP2102.
 
 The CP210x is a series of USB-to-serial chip used in a lot of USB devices
 (similar to FTDIs and PL2303). Certain CP210x devices have an EEPROM on
@@ -17,12 +21,12 @@ various source code examples for Windows and Linux, and multiple drivers
 for Windows.
 
 This project uses results from monitoring the USB bus when the windows library
-programms an CP210x. The windows library was not disassembled for this protocol
-analysis.
+programs the CP210x device. The windows library was not disassembled for this
+protocol analysis.
 
-When the programm is finished, a later goal would be to provide a library which
+When the program is finished, a later goal would be to provide a library which
 can be used to access further functions of the CP210x like the general IO pins
-of the CP2103. The goal is not to provide an tty driver, such driver exists
+of the CP2103. The goal is not to provide an tty driver, such drivers exist
 already for linux and BSD.
 
 Dependencies
@@ -125,3 +129,36 @@ License
 
 The python package 'cp210x' and the python script 'cp210x-program' are provided
 under the terms of the GNU LGPL. See LICENSE.
+
+
+.. |ci| image:: https://github.com/VCTLabs/cp210x-program/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/VCTLabs/cp210x-program/actions/workflows/ci.yml
+    :alt: CI Status
+
+.. |wheels| image:: https://github.com/VCTLabs/cp210x-program/actions/workflows/wheels.yml/badge.svg
+    :target: https://github.com/VCTLabs/cp210x-program/actions/workflows/wheels.yml
+    :alt: Wheel Status
+
+.. |badge| image:: https://github.com/VCTLabs/cp210x-program/actions/workflows/pylint.yml/badge.svg
+    :target: https://github.com/VCTLabs/cp210x-program/actions/workflows/pylint.yml
+    :alt: Pylint Status
+
+.. |release| image:: https://github.com/VCTLabs/cp210x-program/actions/workflows/release.yml/badge.svg
+    :target: https://github.com/VCTLabs/cp210x-program/actions/workflows/release.yml
+    :alt: Release Status
+
+.. |pylint| image:: https://raw.githubusercontent.com/VCTLabs/cp210x-program/badges/develop/pylint-score.svg
+    :target: https://github.com/VCTLabs/cp210x-program/actions/workflows/pylint.yml
+    :alt: Pylint score
+
+.. |license| image:: https://img.shields.io/github/license/VCTLabs/cp210x-program
+    :target: https://github.com/VCTLabs/cp210x-program/blob/master/LICENSE
+    :alt: License
+
+.. |tag| image:: https://img.shields.io/github/v/tag/VCTLabs/cp210x-program?color=green&include_prereleases&label=latest%20release
+    :target: https://github.com/VCTLabs/cp210x-program/releases
+    :alt: GitHub tag
+
+.. |python| image:: https://img.shields.io/badge/python-3.6+-blue.svg
+    :target: https://www.python.org/downloads/
+    :alt: Python
