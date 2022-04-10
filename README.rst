@@ -92,6 +92,17 @@ Taken from the respective device Data Sheets:
 * CP2109 - EPROM only (1024 byte, not re-programmable)
 * CP2102N - EEPROM (960 byte) **does not work**
 
+The following table from AN721 shows the default SiLabs USB device IDs; note
+third-party manufacturers often do not reprogram with their own vendor/product
+IDs.
+
+.. figure:: doc/images/cp210x_default_ids.png
+    :alt: CP120x device IDs
+    :width: 90%
+    :figwidth: 90%
+    :align: left
+
+
 Links
 -----
 
