@@ -2,25 +2,31 @@
  cp210x-program
 ================
 
+|ci| |wheels| |release| |badge|
+
+|tag| |license| |python| |pylint|
+
 The goal of this library is to provide access to the EEPROM of an Silabs CP210x
 under Linux.
 
-.. warning:: THIS VERSION OF cp210x-program IS NOT FULLY TESTED. IT MAY RENDER
-             YOUR CP210x USELESS OR DESTROY IT.  Be aware that the original
-             (and current) version was only tested on CP2102.
+.. warning:: THE LEGACY VERSION OF cp210x-program IS NOT FULLY TESTED. IT MAY RENDER
+             YOUR CP210x USELESS OR DESTROY IT.  Be aware that the current
+             (legacy) version was only tested on CP2102.
 
-The CP210x is an USB-to-serial chip used in a lot of USB devices (similar to
-FTDIs and PL2303). The CP210x has a EEPROM on the chip which can be programmed
-via USB. Silabs provides already a library and gui programm to program this
-EEPROM, but only for windows. 
+The CP210x is a series of USB-to-serial chip used in a lot of USB devices
+(similar to FTDIs and PL2303). Certain CP210x devices have an EEPROM on
+the chip which can be programmed via USB, while others only have the OTP
+EPROM (which cannot be reprogrammed; see `Model notes`_). Silabs provides
+various source code examples for Windows and Linux, and multiple drivers
+for Windows.
 
 This project uses results from monitoring the USB bus when the windows library
-programms an CP210x. The windows library was not disassembled for this protocol
-analysis.
+programs the CP210x device. The windows library was not disassembled for this
+protocol analysis.
 
-When the programm is finished, a later goal would be to provide a library which
+When the program is finished, a later goal would be to provide a library which
 can be used to access further functions of the CP210x like the general IO pins
-of the CP2103. The goal is not to provide an tty driver, such driver exists
+of the CP2103. The goal is not to provide an tty driver, such drivers exist
 already for linux and BSD.
 
 Dependencies
@@ -28,7 +34,7 @@ Dependencies
 
 * Python >= 3
 * PyUSB
- 
+
 Since libusb is available on most Linux, Mac OS X and FreeBSD cp210x-program
 should run flawlessly on these platforms. Currently it is only tested on
 Linux 2.6 (Ubuntu).
@@ -72,32 +78,98 @@ TODO
 * Test on other than CP2102
 * Implement CP2103 GIOP settings
 * Implement GUI
- 
+
+Model notes
+-----------
+
+Taken from the respective device Data Sheets:
+
+* CP2101 - EEPROM (512 byte)  *may work*
+* CP2102 - EEPROM (1024 byte)  *should work*
+* CP2103 - EEPROM (1024 byte)  *should work*
+* CP2104 - EPROM only (1024 byte, not re-programmable)
+* CP2105 - EPROM only (296 byte, not re-programmable)
+* CP2109 - EPROM only (1024 byte, not re-programmable)
+* CP2102N - EEPROM (960 byte) **does not work**
+
+The following table from AN721 shows the default SiLabs USB device IDs; note
+third-party manufacturers often do not reprogram with their own vendor/product
+IDs.
+
+.. figure:: doc/images/cp210x_default_ids.png
+    :alt: CP120x device IDs
+    :width: 90%
+    :figwidth: 90%
+    :align: left
+
+
 Links
 -----
 
 * Original cp210x-program / CP210x Programmer project page by Petr Tesarik (a.k.a. tesarik)
   and Johannes Hölzl (a.k.a. johoelzl): https://sourceforge.net/projects/cp210x-program/
 
-* CP210x Product page on Silicon Labs: http://www.silabs.com/tgwWebApp/public/web_content/products/Microcontrollers/Interface/en/interface.htm
+* CP2102N Product page and Data Sheet on Silicon Labs:
 
-* AN114 Customization Guide:
+  + https://www.silabs.com/interface/usb-bridges/usbxpress/device.cp2102n-gqfn20
+  + https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf
 
-http://www.silabs.com/public/documents/tpub_doc/anote/Microcontrollers/Interface/en/an144.pdf
-http://www.silabs.com/public/documents/software_doc/othersoftware/Microcontrollers/Interface/en/an144sw.zip
+* AN978 CP210x USB-to-UART API Specification:
 
-* AN205 CP210x Baudrate Guide:
+  + note this mainly documents HW/package and feature compatibility, amd only discusses
+    the (newer) CP2102N model as far as configuration byte layout
+  + https://www.silabs.com/documents/public/application-notes/an978-cp210x-usb-to-uart-api-specification.pdf
 
-http://www.silabs.com/public/documents/tpub_doc/anote/Microcontrollers/Interface/en/an205.pdf
-http://www.silabs.com/public/documents/software_doc/othersoftware/Microcontrollers/en/AN205SW.zip
-    
+* AN721 Device Customization Guide:
+
+  + https://www.silabs.com/documents/public/application-notes/AN721.pdf
+  + https://www.silabs.com/documents/public/example-code/AN721SW.zip
+
+* AN197 CP210x Serial Communications Guide:
+
+  + https://www.silabs.com/documents/public/application-notes/an197.pdf
+  + https://www.silabs.com/documents/public/example-code/AN197SW.zip
+
 * AN223 Port Configuration and GPIO for CP210x
 
-http://www.silabs.com/public/documents/tpub_doc/anote/Microcontrollers/Interface/en/an223.pdf
-http://www.silabs.com/public/documents/software_doc/othersoftware/Microcontrollers/Interface/en/AN223SW.zip
+  + https://www.silabs.com/documents/public/application-notes/an223.pdf
+  + https://www.silabs.com/documents/public/example-code/AN223SW.zip
 
 License
 -------
 
 The python package 'cp210x' and the python script 'cp210x-program' are provided
 under the terms of the GNU LGPL. See LICENSE.
+
+
+.. |ci| image:: https://github.com/VCTLabs/cp210x-program/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/VCTLabs/cp210x-program/actions/workflows/ci.yml
+    :alt: CI Status
+
+.. |wheels| image:: https://github.com/VCTLabs/cp210x-program/actions/workflows/wheels.yml/badge.svg
+    :target: https://github.com/VCTLabs/cp210x-program/actions/workflows/wheels.yml
+    :alt: Wheel Status
+
+.. |badge| image:: https://github.com/VCTLabs/cp210x-program/actions/workflows/pylint.yml/badge.svg
+    :target: https://github.com/VCTLabs/cp210x-program/actions/workflows/pylint.yml
+    :alt: Pylint Status
+
+.. |release| image:: https://github.com/VCTLabs/cp210x-program/actions/workflows/release.yml/badge.svg
+    :target: https://github.com/VCTLabs/cp210x-program/actions/workflows/release.yml
+    :alt: Release Status
+
+.. |pylint| image:: https://raw.githubusercontent.com/VCTLabs/cp210x-program/badges/develop/pylint-score.svg
+    :target: https://github.com/VCTLabs/cp210x-program/actions/workflows/pylint.yml
+    :alt: Pylint score
+
+.. |license| image:: https://img.shields.io/github/license/VCTLabs/cp210x-program
+    :target: https://github.com/VCTLabs/cp210x-program/blob/master/LICENSE
+    :alt: License
+
+.. |tag| image:: https://img.shields.io/github/v/tag/VCTLabs/cp210x-program?color=green&include_prereleases&label=latest%20release
+    :target: https://github.com/VCTLabs/cp210x-program/releases
+    :alt: GitHub tag
+
+.. |python| image:: https://img.shields.io/badge/python-3.6+-blue.svg
+    :target: https://www.python.org/downloads/
+    :alt: Python

@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 
-__author__ = "Johannes Hölzl <johannes.hoelzl@gmx.de>"
-__license__ = "GNU LGPL"
+__license__ = 'GNU LGPL'
+__version__ = '0.4'

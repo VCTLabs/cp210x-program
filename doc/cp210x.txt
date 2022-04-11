@@ -1,17 +1,17 @@
 
 
 COMMAND: 0xFF (ACCESS EEPROM)
-INDEX  SIZE            VALUE           
-0x3701 2               VENDOR ID       
-0x3702 2               PRODUCT ID      
-0x3703 -               PRODUCT STRING 
-0x3704 -               SERIAL NUMBER  
+INDEX  SIZE            VALUE
+0x3701 2               VENDOR ID
+0x3702 2               PRODUCT ID
+0x3703 -               PRODUCT STRING
+0x3704 -               SERIAL NUMBER
 0x3705                 ?               ? (bmAttribute?)
 0x3706 1               MAX POWER (2mA) -
 0x3707 2               BCD DEV VERSION -
 0x3708                 ?               ?
 0x3709 1024            EEPROM DUMP
-0x370A 1               LOCK VALUE          
+0x370A 1               LOCK VALUE
 0x370B 1               PART NUMBER
 
 COMMAND: 0x0F UNKNOWN

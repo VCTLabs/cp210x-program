@@ -20,42 +20,42 @@ IT MAY RENDER YOUR CP210x USELESS OR DESTROY IT.</strong>
         <li><a href="http://sourceforge.net/project/showfiles.php?group_id=193093">Download</a></li>
         <li><a href="http://cp210x-program.hg.sourceforge.net/hgweb/cp210x-program/cp210x-program/">Code Repository (Mercurial)</a>
     </li></ul>
-    
+
     <p>
 Be aware that the current version is only tested on CP2102.
     </p>
-    
+
     <p>
 The goal of this library is to provide access to the EEPROM of an Silabs CP210x
-under Linux. 
+under Linux.
     </p>
-    
+
     <p>
 The CP210x is an USB-to-serial chip used in a lot of USB devices (similar to
 FTDIs and PL2303). The CP210x has a EEPROM on the chip which can be programmed
 via USB. Silabs provides already a library and gui programm to program this
-EEPROM, but only for windows. 
+EEPROM, but only for windows.
     </p>
-    
+
     <p>
 This project uses results from monitoring the USB bus when the windows library
 programms an CP210x. The windows library was not disassembled for this protocol
 analysis.
     </p>
-    
+
     <p>
 When the programm is finished, a later goal would be to provide a library which
 can be used to access further functions of the CP210x like the general IO pins
 of the CP2103. The goal is not to provide an tty driver, such driver exists
 already for linux and BSD.
     </p>
-    
-    
+
+
     <dl>
         <dt>Version:</dt> <dd>0.3</dd>
         <dt>Author:</dt> <dd>Johannes Hölzl &lt;johannes.hoelzl@gmx.de&gt;</dd>
     </dl>
-    
+
     <h2>Dependencies</h2>
 
     <ul>
@@ -63,19 +63,19 @@ already for linux and BSD.
         <li>ctypes &gt;= 0.9 (only when Python 2.4 is used)</li>
         <li>libusb 0.1</li>
     </ul>
-    
+
     <p>
 Since libusb is available on most Linux, Mac OS X and FreeBSD cp210x-program
 should run flawlessly on these platforms. Currently it is only tested on
 Linux 2.6 (Ubuntu).
     </p>
-    
+
     <p>
 If cp210x-program should run as non-root user, add the udev rule found in
 doc/45-cp210x-programming.rules to /etc/udev/rules.d. When devices with already
 programmed IDs are reprogrammed at this IDs to 45-cp210x-programming.rules.
     </p>
-    
+
     <h2>Usage</h2>
 
     <h3>Read EEPROM content into hexfile:</h3>
@@ -94,7 +94,7 @@ programmed IDs are reprogrammed at this IDs to 45-cp210x-programming.rules.
 </pre>
 
     <h2>TODO</h2>
-    
+
     <ul>
         <li>Test on other than CP2102</li>
         <li>Implement CP2103 GIOP settings</li>
@@ -102,7 +102,7 @@ programmed IDs are reprogrammed at this IDs to 45-cp210x-programming.rules.
     </ul>
 
     <h2>Development</h2>
-    
+
     <ul>
       <li>Clone repository: <code>hg clone http://cp210x-program.hg.sourceforge.net/hgweb/cp210x-program/cp210x-program/</code></li>
       <li>Run, Change, Debug, Commit, Repeat</li>
@@ -111,19 +111,19 @@ programmed IDs are reprogrammed at this IDs to 45-cp210x-programming.rules.
     </ul>
 
     <h2>Links</h2>
-    
+
     <ul>
         <li><a href="http://www.silabs.com/tgwWebApp/public/web_content/products/Microcontrollers/Interface/en/interface.htm">CP210x Product page on Silicon Labs</a></li>
         <li><a href="http://www.silabs.com/public/documents/tpub_doc/anote/Microcontrollers/Interface/en/an144.pdf">AN114 Customization Guide</a> (<a href="http://www.silabs.com/public/documents/software_doc/othersoftware/Microcontrollers/Interface/en/an144sw.zip">Software</a>)</li>
         <li><a href="http://www.silabs.com/public/documents/tpub_doc/anote/Microcontrollers/Interface/en/an205.pdf">AN205 CP210x Baudrate Guide</a> (<a href="http://www.silabs.com/public/documents/software_doc/othersoftware/Microcontrollers/en/AN205SW.zip">Software</a>)</li>
         <li><a href="http://www.silabs.com/public/documents/tpub_doc/anote/Microcontrollers/Interface/en/an223.pdf">AN223 Port Configuration and GPIO for CP210x</a> (<a href="http://www.silabs.com/public/documents/software_doc/othersoftware/Microcontrollers/Interface/en/AN223SW.zip">Software</a>)</li>
     </ul>
-    
+
     <h2>License</h2>
 
     <p>
     The python package 'cp210x' and the python script 'cp210x-program' are provided
 under the terms of the GNU LGPL. See LICENSE.
     </p>
-    
+
 </body></html>

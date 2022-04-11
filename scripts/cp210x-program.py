@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (c) 2007 Johannes Hölzl <johannes.hoelzl@gmx.de>
 #
@@ -7,20 +7,20 @@
 Provides access to the EEPROM of a Silabs CP210x. The data can be directly
 read from or written to the device.
 """
-__author__ = "Johannes Hölzl <johannes.hoelzl@gmx.de>"
-__license__ = "GNU LGPL"
-__version__ = "0.3"
 
-import sys
+import optparse
 import re
 import string
+import sys
 import traceback
-import optparse
 
-from cp210x import valuefile, cp210x
+from cp210x import __license__, __version__, cp210x, valuefile
 from cp210x.eeprom import EEPROM, HexFileError
-from cp210x.valuefile import read_baudrate_info, update_values, ValuesFileError
-
+from cp210x.valuefile import (
+    ValuesFileError,
+    read_baudrate_info,
+    update_values,
+)
 
 TRANS_UNDERSCORE = str.maketrans('_', '-')
 
@@ -70,7 +70,7 @@ def output_file(arg):
     if arg is None or arg == '-':
         return sys.stdout
     else:
-        return open(arg, 'w')
+        return open(arg, 'w', newline='\n')
 
 def options_to_values(options):
     values = {}
@@ -87,7 +87,7 @@ def options_to_values(options):
             try:
                 baudrate, info = s.split(':')
             except TypeError:
-                error("option --set-baudrate: need two parts separated by ':'",
+                error("option --set-baudrate: requires two parts separated by ':'",
                       ERR_WRONG_INPUT)
             try:
                 baudrate_table.append(read_baudrate_info(info) +
@@ -109,7 +109,7 @@ def find_device(patterns):
                 pid = int(pidString, 16)
 
             except (TypeError, ValueError):
-                error("Match nust be either 'ddd/ddd' or 'hhhh:hhhh'.",
+                error("Match must be either 'ddd/ddd' or 'hhhh:hhhh'.",
                       ERR_WRONG_INPUT)
 
             usb_patterns.append(dict(idVendor=vid, idProduct=pid))
@@ -137,9 +137,15 @@ def find_device(patterns):
 
 def read_cp210x(options):
     usbdev = find_device(options.match)
+    print("USB find_device returned:\n{}".format(usbdev))
     dev = cp210x.Cp210xProgrammer(usbdev)
+    print("Cp210xProgrammer returned obj:\n{}".format(repr(dev)))
+
+    if isinstance(dev, cp210x.Cp210xProgrammer):
+        print("Cp210xProgrammer instance is valid!!")
 
     eeprom = EEPROM(dev)
+    print("EEPROM returned obj:\n{}".format(repr(eeprom)))
 
     if options.hex_output:
         eeprom.write_hex_file(output_file(options.hex_output))
