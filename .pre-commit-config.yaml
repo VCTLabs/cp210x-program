@@ -2,6 +2,8 @@
 #   pre-commit install
 # To update the pre-commit hooks run:
 #   pre-commit install-hooks
+
+exclude: '^(ext/.*|.tox/)$'
 repos:
   - repo: meta
     hooks:
