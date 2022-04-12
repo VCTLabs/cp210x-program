@@ -75,9 +75,8 @@ the CP210x always uses 500kBit/sec as baudrate.
 TODO
 ----
 
-* Test on other than CP2102
-* Implement CP2103 GIOP settings
-* Implement GUI
+* (re)Test on CP2102 and CP2103 (legacy parts)
+* read config blob from CP2102N (new part)
 
 Model notes
 -----------
@@ -90,7 +89,7 @@ Taken from the respective device Data Sheets:
 * CP2104 - EPROM only (1024 byte, not re-programmable)
 * CP2105 - EPROM only (296 byte, not re-programmable)
 * CP2109 - EPROM only (1024 byte, not re-programmable)
-* CP2102N - EEPROM (960 byte) **does not work**
+* CP2102N - EEPROM (960 byte) **will not work** with legacy ``cp210x-program``
 
 The following table from AN721 shows the default SiLabs USB device IDs; note
 third-party manufacturers often do not reprogram with their own vendor/product
