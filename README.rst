@@ -157,7 +157,7 @@ under the terms of the GNU LGPL. See LICENSE.
     :target: https://github.com/VCTLabs/cp210x-program/actions/workflows/release.yml
     :alt: Release Status
 
-.. |pylint| image:: https://raw.githubusercontent.com/VCTLabs/cp210x-program/badges/develop/pylint-score.svg
+.. |pylint| image:: https://raw.githubusercontent.com/VCTLabs/cp210x-program/badges/master/pylint-score.svg
     :target: https://github.com/VCTLabs/cp210x-program/actions/workflows/pylint.yml
     :alt: Pylint score
 

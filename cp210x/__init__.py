@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 
 __license__ = 'GNU LGPL'
-__version__ = '0.4'
+__version__ = '0.4.1'
