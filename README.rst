@@ -138,8 +138,14 @@ License
 -------
 
 The python package 'cp210x' and the python script 'cp210x-program' are provided
-under the terms of the GNU LGPL. See LICENSE.
+under the terms of the GNU LGPL. See LICENSE.  Otherwise, anything under the
+``ext`` directory tree has its own license/copyrights.
 
+Current external sources:
+
+* cp2102 source and header files borrowed from:
+  https://github.com/lowerrandom/DaBomb_dc27_badge/tree/master/software/tools/src
+* requires GNU/Clang toolchain and libusb
 
 .. |ci| image:: https://github.com/VCTLabs/cp210x-program/actions/workflows/ci.yml/badge.svg
     :target: https://github.com/VCTLabs/cp210x-program/actions/workflows/ci.yml

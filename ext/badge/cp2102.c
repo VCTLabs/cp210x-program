@@ -348,7 +348,7 @@ main (int argc, char * argv[])
 	part = 0;
 	len = 1;
 	cp210x_read (dev, CP210X_CFG_MODEL, &part, &len);
-	if (part != CP210X_PROD_CP2102N) {
+	if (part != CP210X_PROD_CP2102N_QFN28 && part != CP210X_PROD_CP2102N_QFN24 && part != CP210X_PROD_CP2102N_QFN20) {
 		cp210x_close (dev);
 		fprintf (stderr, "device is not a CP2102N (0x%02X)\n", part);
 		exit (-1);
