@@ -43,6 +43,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox tox-gh-actions
 
+    - name: Install deps with apt helper action
+      uses: ryankurte/action-apt@v0.2.0
+      if: runner.os == 'Linux'
+      with:
+        # architectures to pass to dpkg --add-architecture
+        #architectures: # optional
+        packages: libusb-dev libusb-1.0.0-dev
+
     - name: Run tests
       run: |
         tox
@@ -56,3 +64,11 @@ jobs:
     - name: Check wheel
       run: |
         tox -e check
+
+    - name: Build C tool
+      if: runner.os == 'Linux'
+      run: |
+        tox -e badge
+      env:
+        CC: 'gcc'
+        CXX: 'g++'

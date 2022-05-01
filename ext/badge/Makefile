@@ -1,6 +1,6 @@
 #
 
-CC=cc
+CC ?= cc
 BIN=./bin
 SOURCE=./
 
