@@ -9,13 +9,15 @@ if not dev:
     print("No devices found!!")
 else:
     print(usb.core.show_devices(idVendor = 0x10c4))
+    print('Language IDs: {}'.format(dev.langids))
     print('Manufacturer: {}'.format(usb.util.get_string(dev, dev.iManufacturer)))
     print('Product: {}\n'.format(usb.util.get_string(dev, dev.iProduct)))
+    print('Serial number: {}\n'.format(usb.util.get_string(dev, dev.iSerialNumber)))
 
 for config in dev:
     cfg_num = config.bConfigurationValue
     ifaces = config.bNumInterfaces
-    print('Configuration {} has {} interfaces.'.format(cfg_num, ifaces))
+    print('Configuration {} has {} interface(s).'.format(cfg_num, ifaces))
     for iface in config:
         if dev.is_kernel_driver_active(iface.bInterfaceNumber):
             dev.detach_kernel_driver(iface.bInterfaceNumber)

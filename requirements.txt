@@ -1,2 +1,2 @@
-#hexdump @ https://github.com/sarnold/hexdump/releases/download/3.4.0/hexdump-3.4.0-py3-none-any.whl
+hexdump @ https://github.com/sarnold/hexdump/releases/download/3.4.0/hexdump-3.4.0-py3-none-any.whl
 pyusb

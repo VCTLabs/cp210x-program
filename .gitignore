@@ -60,3 +60,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# program binaries
+ext/badge/bin/
