@@ -66,6 +66,9 @@ Read EEPROM content into hexfile::
 Show EEPROM content from device 002 on bus 001::
 
   $ cp210x-program --read-cp210x -m 001/002
+  
+*Hint: The bus and device number can be queried using the `lsusb -t` command, which is available on most linux distributions.*
+  
 
 Write some data to device with vendor id 0x10C4 and product id 0xEA62::
 
