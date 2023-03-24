@@ -1,8 +1,8 @@
 #
 
 CC ?= cc
-BIN=./bin
-SOURCE=./
+BIN ?= ./bin
+SOURCE = ./
 
 PROG=cp2102
 LIST=$(addprefix $(BIN)/, $(PROG))
