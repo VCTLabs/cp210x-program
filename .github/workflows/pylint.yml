@@ -19,7 +19,7 @@ jobs:
       path: ${{ steps.analyze.outputs.path }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Extract base branch name
       id: extract_branch
@@ -37,7 +37,7 @@ jobs:
         echo "##[set-output name=branch;]${EXPORT_VALUE}"
 
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: 3.8
 
@@ -75,14 +75,14 @@ jobs:
       #markdown: ${{ steps.url.outputs.markdown }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         ref: badges
         path: badges
 
     # Use the output from the `analyze` step
     - name: Create pylint badge
-      uses: emibcn/badge-action@v1
+      uses: emibcn/badge-action@v1.2.4
       id: badge
       with:
         label: 'Pylint score'
