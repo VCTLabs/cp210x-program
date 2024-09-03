@@ -74,7 +74,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       # download all artifacts to project dir
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.7
 
       - name: Check wheel install
         run: |
