@@ -444,13 +444,17 @@ main (int argc, char * argv[])
 	if (gpio != NULL) {
 		p = (uint8_t *)&config;
 		if (strcmp (gpio, "on") == 0) {
-			p[CP2102N_MODE_RESET_P1] |= CP2102N_MODE_GPIO0 |
-			    CP2102N_MODE_GPIO1;
+			// [CP210N Datasheet](https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf)
+			// NOTE: As visible from Figure 5.3 and Table 5.3 (in the datasheet), the QFN20 package uses
+			// GPIO.2/TXT and GPIO.3/RXT, as opposed to GPIO.0/TXT and GPIO.1/RXT, respectively, for the other
+			// two packages (i.e., QFN28 and QFN24). So here we need to check whether we are dealing with QFN20, and,
+			// if so, adjust the target bits accordingly.
+			p[CP2102N_MODE_RESET_P1] |= ((part != CP210X_PROD_CP2102N_QFN20) ? (CP2102N_MODE_GPIO0 | CP2102N_MODE_GPIO1) : (CP2102N_MODE_GPIO2 | CP2102N_MODE_GPIO3));
 			p[CP2102N_PORTSET] |= CP2102N_PORTSET_TXLED |
 			    CP2102N_PORTSET_RXLED;
 		} else if (strcmp (gpio, "off") == 0) {
-			p[CP2102N_MODE_RESET_P1] &= ~(CP2102N_MODE_GPIO0 |
-			    CP2102N_MODE_GPIO1);
+			// NOTE: same note as above "if" block regarding QFN20 package and TX/RX GPIOs.
+			p[CP2102N_MODE_RESET_P1] &= ~((part != CP210X_PROD_CP2102N_QFN20) ? (CP2102N_MODE_GPIO0 | CP2102N_MODE_GPIO1) : (CP2102N_MODE_GPIO2 | CP2102N_MODE_GPIO3));
 			p[CP2102N_PORTSET] &= ~(CP2102N_PORTSET_TXLED |
 			    CP2102N_PORTSET_RXLED);
 		} else {
