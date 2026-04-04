@@ -28,14 +28,16 @@ Requires:
     url="https://github.com/VCTLabs/cp210x-program",
     platforms="POSIX",
     classifiers=[
-        "License :: OSI-Approved Open Source :: GNU Library or Lesser General Public License (LGPL)",
-        "Intended Audience :: Manufacturing",
         "Development Status :: 4 - Beta",
+        "Intended Audience :: Manufacturing",
         "Topic :: System :: Hardware :: Hardware Drivers",
         "Programming Language :: Python",
         "Operating System :: POSIX :: Linux",
         "Operating System :: POSIX :: BSD :: FreeBSD",
         "Operating System :: MacOS :: MacOS X",
+    ],
+    install_requires =[
+        'pyusb'
     ],
     packages=[
         'cp210x'

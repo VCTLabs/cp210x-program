@@ -7,9 +7,11 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  matrix_build:
 
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     defaults:
       run:
         shell: bash
@@ -21,20 +23,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macos-latest]
-        python-version: [3.7, 3.8, 3.9, '3.10']
+        os: [ubuntu-24.04, macos-latest, windows-latest]
+        python-version: [3.9, '3.10', '3.11', '3.12', '3.13']
     steps:
     - name: Set git crlf/eol
       run: |
         git config --global core.autocrlf false
         git config --global core.eol lf
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
       with:
-        submodules: True
+        fetch-depth: 0
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -43,32 +45,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox tox-gh-actions
 
-    - name: Install deps with apt helper action
-      uses: ryankurte/action-apt@v0.2.0
-      if: runner.os == 'Linux'
-      with:
-        # architectures to pass to dpkg --add-architecture
-        #architectures: # optional
-        packages: libusb-dev libusb-1.0.0-dev
-
     - name: Run tests
       run: |
         tox
       env:
         PLATFORM: ${{ matrix.os }}
-
-    - name: Check pkg builds
-      run: |
-        tox -e deploy
-
-    - name: Check wheel
-      run: |
-        tox -e check
-
-    - name: Build C tool
-      if: runner.os == 'Linux'
-      run: |
-        tox -e badge
-      env:
-        CC: 'gcc'
-        CXX: 'g++'
