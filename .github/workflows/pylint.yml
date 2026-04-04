@@ -9,7 +9,9 @@ on:
 jobs:
   pylint:
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     defaults:
       run:
         shell: bash
@@ -19,7 +21,9 @@ jobs:
       path: ${{ steps.analyze.outputs.path }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
 
     - name: Extract base branch name
       id: extract_branch
@@ -34,17 +38,21 @@ jobs:
         else
             EXPORT_VALUE="${TMP_GITHUB_REF}"
         fi
-        echo "##[set-output name=branch;]${EXPORT_VALUE}"
+        echo "branch=${EXPORT_VALUE}" >> $GITHUB_OUTPUT
 
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v5
       with:
-        python-version: 3.8
+        python-version: '3.10'
 
     - name: Install tox
       run: |
-        python -m pip install --upgrade pip wheel
-        pip install tox tox-gh-actions
+        python -m pip install --upgrade pip
+        pip install tox
+
+    #- name: Run tox bare-ass
+      #run: |
+        #tox -e lint
 
     - name: Run pylint
       id: analyze
@@ -53,36 +61,37 @@ jobs:
       run: |
         rating=$(bash -c 'tox -e lint' | grep 'Your code has been rated at' | cut -f7 -d " ")
         echo "Pylint score: ${rating}"
-        echo "##[set-output name=rating;]${rating}"
-        echo "##[set-output name=path;]${BADGE_PATH}"
+        echo "rating=${rating}" >> $GITHUB_OUTPUT
+        echo "path=${BADGE_PATH}" >> $GITHUB_OUTPUT
 
   badge:
     # Only generate and publish if these conditions are met:
     # - The previous job/analyze step ended successfully
     # - At least one of these is true:
-    #   - This is a push event and the push event is on branch 'master' or 'develop'
+    #   - This is a push event and the push event is on branch 'main' or 'develop'
     # Note: if this repo is personal (ie, not an org repo) then you can
     #       use the following to change the scope of the next 2 jobs
     #       instead of running on branch push as shown below:
     #   - This is a pull request event and the pull actor is the same as the repo owner
-    #     if: ${{ ( github.event_name == 'pull_request' && github.actor == github.repository_owner ) || github.ref == 'refs/heads/master' }}
+    #     if: ${{ ( github.event_name == 'pull_request' && github.actor == github.repository_owner ) || github.ref == 'refs/heads/main' }}
     name: Generate badge image with pylint score
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: read
+      contents: write
+      actions: read
     needs: [pylint]
     if: ${{ github.event_name == 'push' }}
-    #outputs:
-      #url: ${{ steps.url.outputs.url }}
-      #markdown: ${{ steps.url.outputs.markdown }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
       with:
         ref: badges
         path: badges
 
     # Use the output from the `analyze` step
     - name: Create pylint badge
-      uses: emibcn/badge-action@v1.2.4
+      uses: emibcn/badge-action@808173dd03e2f30c980d03ee49e181626088eee8  # v2.0.3
       id: badge
       with:
         label: 'Pylint score'
@@ -96,8 +105,8 @@ jobs:
         FILE: 'pylint-score.svg'
       working-directory: ./badges
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
         mkdir -p "${BRANCH}"
         mv "${FILE}" "${BRANCH}"
         git add "${BRANCH}/${FILE}"
@@ -105,7 +114,7 @@ jobs:
         git commit -m "Add/Update badge" || true
 
     - name: Push badge commit
-      uses: ad-m/github-push-action@master
+      uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df  # v0.8.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: badges
