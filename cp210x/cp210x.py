@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2007 Johannes Hölzl <johannes.hoelzl@gmx.de>
 #
 # This library is covered by the GNU LGPL, read LICENSE for details.
@@ -77,7 +76,7 @@ def to_bcd(i):
 
 
 def to_bcd2(i_j_tuple):
-    (i, j) = i_j_tuple
+    i, j = i_j_tuple
     return to_bcd(i) << 8 | to_bcd(j)
 
 
@@ -173,9 +172,7 @@ class Cp210xProgrammer(object):
     TIMEOUT = 300  # ms
 
     @classmethod
-    def list_devices(
-        self, patterns=[{'idVendor': VID_SILABS, 'idProduct': PID_CP210x}]
-    ):
+    def list_devices(self, patterns=[{'idVendor': VID_SILABS, 'idProduct': PID_CP210x}]):
         """Yields a list of devices matching certain patterns.
 
         param patterns: This must be a list of dictionaries. Each device
@@ -227,18 +224,14 @@ class Cp210xProgrammer(object):
             CTRL_OUT | CTRL_TYPE_VENDOR, request, value, index, data
         )
         if data is not None and res != len(data):
-            raise Cp210xError(
-                'Short write (%d of %d bytes)' % (res, len(data))
-            )
+            raise Cp210xError('Short write (%d of %d bytes)' % (res, len(data)))
 
     def _set_config_string(self, value, content, max_desc_size):
         assert isinstance(content, str)
         encoded = content.encode('utf-16-le')
         desc_size = len(encoded) + 2
         assert desc_size <= max_desc_size
-        self._set_config(
-            value, data=desc_size.to_bytes(1, 'big') + b'\x03' + encoded
-        )
+        self._set_config(value, data=desc_size.to_bytes(1, 'big') + b'\x03' + encoded)
 
     def _get_config(self, value, length, index=0, request=CP210x_CONFIG):
         print(
@@ -315,9 +308,7 @@ class Cp210xProgrammer(object):
 
     def set_eeprom_content(self, content):
         """Write a 1024-byte blob to the EEPROM"""
-        assert len(content) == SIZE_EEPROM, (
-            'EEPROM data must be %i bytes.' % SIZE_EEPROM
-        )
+        assert len(content) == SIZE_EEPROM, 'EEPROM data must be %i bytes.' % SIZE_EEPROM
         assert isinstance(content, bytes), 'EEPROM data must be bytes.'
         self._set_config(REG_EEPROM, data=content)
 
@@ -339,9 +330,7 @@ class Cp210xProgrammer(object):
         For Unicode Plane 0 (BMP; code points 0-FFFF), this specifies
         the maximum length of the string in characters.
         """
-        self._set_config_string(
-            REG_PRODUCT_STRING, product_string, SIZE_PRODUCT_STRING
-        )
+        self._set_config_string(REG_PRODUCT_STRING, product_string, SIZE_PRODUCT_STRING)
 
     def set_serial_number(self, serial_number):
         """Set the serial number string.
@@ -351,9 +340,7 @@ class Cp210xProgrammer(object):
         For Unicode Plane 0 (BMP; code points 0-FFFF), this specifies
         the maximum length of the string in characters.
         """
-        self._set_config_string(
-            REG_SERIAL_NUMBER, serial_number, SIZE_SERIAL_NUMBER
-        )
+        self._set_config_string(REG_SERIAL_NUMBER, serial_number, SIZE_SERIAL_NUMBER)
 
     def set_max_power(self, max_power):
         """Set maximum power consumption."""

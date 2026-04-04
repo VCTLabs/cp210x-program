@@ -4,11 +4,11 @@ import sys
 import usb.core
 import usb.util
 
-dev = usb.core.find(idVendor = 0x10c4)  # Silicon Labs
+dev = usb.core.find(idVendor=0x10C4)  # Silicon Labs
 if not dev:
     print("No devices found!!")
 else:
-    print(usb.core.show_devices(idVendor = 0x10c4))
+    print(usb.core.show_devices(idVendor=0x10C4))
     print('Language IDs: {}'.format(dev.langids))
     print('Manufacturer: {}'.format(usb.util.get_string(dev, dev.iManufacturer)))
     print('Product: {}\n'.format(usb.util.get_string(dev, dev.iProduct)))
@@ -31,15 +31,11 @@ dev.set_configuration()
 for cfg in dev:
     sys.stdout.write(str(cfg.bConfigurationValue) + '\n')
     for intf in cfg:
-        sys.stdout.write('\t' + \
-                         str(intf.bInterfaceNumber) + \
-                         ',' + \
-                         str(intf.bAlternateSetting) + \
-                         '\n')
+        sys.stdout.write(
+            '\t' + str(intf.bInterfaceNumber) + ',' + str(intf.bAlternateSetting) + '\n'
+        )
         for ep in intf:
-            sys.stdout.write('\t\t' + \
-                             str(ep.bEndpointAddress) + \
-                             '\n')
+            sys.stdout.write('\t\t' + str(ep.bEndpointAddress) + '\n')
     print('')
     print(cfg)
 

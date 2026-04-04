@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2007 Johannes Hölzl <johannes.hoelzl@gmx.de>
 #
 # This library is covered by the GNU LGPL, read LICENSE for details.
@@ -66,9 +65,7 @@ def write_bool(b):
 def read_bool(s):
     s = s.strip().lower()
     if s not in ['true', 'yes', 'false', 'no']:
-        raise ValueError(
-            "Boolean must be either 'true', 'yes', 'false' or 'no'."
-        )
+        raise ValueError("Boolean must be either 'true', 'yes', 'false' or 'no'.")
     return s in ['true', 'yes']
 
 
@@ -126,15 +123,12 @@ def read_file(fp):
                 baudrate = int(name)
             except ValueError:
                 raise ValuesFileError(
-                    "Key names in 'baudrate table' must be"
-                    ' baudrate numbers.'
+                    "Key names in 'baudrate table' must be" ' baudrate numbers.'
                 )
             try:
                 baudrate_table.append(read_baudrate_info(value) + (baudrate,))
             except ValueError as err:
-                raise ValuesFileError(
-                    'Wrong baudrate info %i: %s' % (baudrate, str(err))
-                )
+                raise ValuesFileError('Wrong baudrate info %i: %s' % (baudrate, str(err)))
         baudrate_table.sort(key=(lambda i: i[3]), reverse=True)
 
         values['baudrate_table'] = baudrate_table
@@ -154,7 +148,7 @@ def write_file(fp, values):
     if 'baudrate_table' in values:
         fp.write('\n')
         fp.write('[baudrate table]\n')
-        for (baudgen, timegen, prescaler, baudrate) in sorted(
+        for baudgen, timegen, prescaler, baudrate in sorted(
             values['baudrate_table'], key=(lambda i: i[3]), reverse=True
         ):
             fp.write(
@@ -210,9 +204,7 @@ def update_values(v, new, dev):
                 baudrate_table = old_baudrate_table
             else:
                 baudrate_table = list(
-                    merge_baudrate_table(
-                        dev.baudrate_table, old_baudrate_table
-                    )
+                    merge_baudrate_table(dev.baudrate_table, old_baudrate_table)
                 )
         else:
             baudrate_table = dev.baudrate_table
@@ -225,7 +217,7 @@ def update_values(v, new, dev):
 
 
 def merge_baudrate_table(old, new):
-    for (old_info, (start, stop)) in zip(old, REQUEST_BAUDRATE_RANGES):
+    for old_info, (start, stop) in zip(old, REQUEST_BAUDRATE_RANGES):
         for baudgen, timer, prescaler, baudrate in new:
             if (start is None or baudrate <= start) and baudrate >= stop:
                 yield (baudgen, timer, prescaler, baudrate)
