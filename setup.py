@@ -36,13 +36,7 @@ Requires:
         "Operating System :: POSIX :: BSD :: FreeBSD",
         "Operating System :: MacOS :: MacOS X",
     ],
-    install_requires =[
-        'pyusb'
-    ],
-    packages=[
-        'cp210x'
-    ],
-    scripts=[
-        'scripts/cp210x-program.py'
-    ],
+    install_requires=['pyusb'],
+    packages=['cp210x'],
+    scripts=['scripts/cp210x-program.py'],
 )

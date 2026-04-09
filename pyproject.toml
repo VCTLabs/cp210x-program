@@ -1,0 +1,85 @@
+[build-system]
+requires = [
+    "setuptools>=45",
+    "setuptools_scm[toml]>=6.0",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+#version_scheme = "post-release"
+version_scheme = "no-guess-dev"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = ["tests",]
+log_cli =  true
+doctest_optionflags = ["ELLIPSIS", "NORMALIZE_WHITESPACE",]
+addopts = "--strict-markers"
+markers = "subscript"
+filterwarnings = [
+    "ignore:currentThread:DeprecationWarning",
+    "ignore:co_lnotab:DeprecationWarning",
+]
+
+[tool.coverage.run]
+branch = true
+source_pkgs = ["cp210x"]
+omit = [
+    "setup.py",
+    "scripts",
+    "doc",
+    ".tox",
+]
+
+[tool.coverage.paths]
+source = ["cp210x"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+ignore_errors = true
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "raise AssertionError",
+    "if typing.TYPE_CHECKING:",
+    "if TYPE_CHECKING:",
+]
+
+[tool.black]
+line-length = 90
+skip-string-normalization = true
+include = '\.py$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | build
+  | docs
+  | dist
+  | edm1-captures
+  | tests
+)/
+'''
+
+[tool.pycln]
+all = true
+
+[tool.isort]
+line_length = 72
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+
+[tool.bandit]
+exclude_dirs = ["doc", "testdata",]
+#skips = ["B101"]
+
+[tool.mypy]
+exclude =  [".tox"]

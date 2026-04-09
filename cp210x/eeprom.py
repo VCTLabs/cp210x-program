@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2007 Johannes Hölzl <johannes.hoelzl@gmx.de>
 #
 # This library is covered by the GNU LGPL, read LICENSE for details.
@@ -51,9 +50,10 @@ def _int_value(position, size, read=lambda x: x, write=lambda x: x):
 def _str_value(position, max_desc_size):
     def get(self):
         desc_size = from_binary(self.get(position, 1))
-        assert (
-            desc_size <= max_desc_size and desc_size >= 2
-        ), 'desc_size: %d, max: %d' % (desc_size, max_desc_size)
+        assert desc_size <= max_desc_size and desc_size >= 2, 'desc_size: %d, max: %d' % (
+            desc_size,
+            max_desc_size,
+        )
         assert self.get(position + 1, 1) == b'\x03', 'Missing 0x03 at %04X' % (
             position + 1
         )
@@ -109,8 +109,7 @@ class EEPROM(object):
             if tag_type == 0x00:
                 if tag_address != address:
                     raise HexFileError(
-                        'Expected address %04X but found %04X'
-                        % (address, tag_address)
+                        'Expected address %04X but found %04X' % (address, tag_address)
                     )
                 self.content += line
                 address += len(line)
@@ -126,12 +125,7 @@ class EEPROM(object):
         for tag_start in range(0, len(self.content), 0x10):
             line = self.content[tag_start : tag_start + 0x10]
             address = self.START_ADDRESS + tag_start
-            tag = (
-                to_binary(len(line), 1)
-                + to_binary(address, le=False)
-                + b'\x00'
-                + line
-            )
+            tag = to_binary(len(line), 1) + to_binary(address, le=False) + b'\x00' + line
             cs = checksum(tag)
             if cs == 0:
                 tag += b'\x00'
@@ -170,20 +164,14 @@ class EEPROM(object):
         return self.content[pos : pos + length]
 
     def set(self, pos, data):
-        self.content = (
-            self.content[:pos] + data + self.content[pos + len(data) :]
-        )
+        self.content = self.content[:pos] + data + self.content[pos + len(data) :]
 
     @property
     def baudrate_table(self):
         dat = self.get(POS_BAUDRATE_TABLE, cp210x.SIZE_BAUDRATE_TABLE)
         return [
-            cp210x.parse_baudrate_cfg(
-                dat[pos : pos + cp210x.SIZE_BAUDRATE_CFG]
-            )
-            for pos in range(
-                0, cp210x.SIZE_BAUDRATE_TABLE, cp210x.SIZE_BAUDRATE_CFG
-            )
+            cp210x.parse_baudrate_cfg(dat[pos : pos + cp210x.SIZE_BAUDRATE_CFG])
+            for pos in range(0, cp210x.SIZE_BAUDRATE_TABLE, cp210x.SIZE_BAUDRATE_CFG)
         ]
 
     @baudrate_table.setter

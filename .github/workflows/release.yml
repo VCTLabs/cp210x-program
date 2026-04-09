@@ -19,8 +19,8 @@ jobs:
 
   create_release:
     name: Create Release
-    needs: [build_wheels, build_docs]
-    runs-on: ubuntu-22.04
+    needs: [build_wheels]
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Get version
